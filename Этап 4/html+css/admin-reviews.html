@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модерация рецензий</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">MovieHub Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">На сайт</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 admin-sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Дашборд</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-content.html">Контент</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-users.html">Пользователи</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin-reviews.html">Рецензии</a>
+                    </li>
+                </ul>
+            </div>
+
+            <main class="col-md-10 ms-sm-auto px-md-4 my-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Модерация рецензий</h1>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Поиск по автору или контенту">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select">
+                                    <option>Все статусы</option>
+                                    <option>На модерации</option>
+                                    <option>Опубликовано</option>
+                                    <option>Отклонено</option>
+                                    <option>Черновик</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-outline-primary w-100">Применить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Автор</th>
+                                        <th>Контент</th>
+                                        <th>Заголовок</th>
+                                        <th>Оценка</th>
+                                        <th>Статус</th>
+                                        <th>Дата</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Алексей Б.</td>
+                                        <td>Название фильма</td>
+                                        <td>Отличный фильм!</td>
+                                        <td>5</td>
+                                        <td><span class="badge badge-moderation">Модерация</span></td>
+                                        <td>22.12.2024</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1">Просмотреть</button>
+                                            <button class="btn btn-sm btn-success me-1">Одобрить</button>
+                                            <button class="btn btn-sm btn-danger">Отклонить</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Мария П.</td>
+                                        <td>Название сериала</td>
+                                        <td>Хороший сериал</td>
+                                        <td>4</td>
+                                        <td><span class="badge badge-moderation">Модерация</span></td>
+                                        <td>21.12.2024</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1">Просмотреть</button>
+                                            <button class="btn btn-sm btn-success me-1">Одобрить</button>
+                                            <button class="btn btn-sm btn-danger">Отклонить</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Иван В.</td>
+                                        <td>Название фильма</td>
+                                        <td>Интересный фильм</td>
+                                        <td>4</td>
+                                        <td><span class="badge badge-published">Опубликовано</span></td>
+                                        <td>20.12.2024</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1">Просмотреть</button>
+                                            <button class="btn btn-sm btn-warning">Скрыть</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Елена К.</td>
+                                        <td>Название фильма</td>
+                                        <td>Не понравилось</td>
+                                        <td>2</td>
+                                        <td><span class="badge badge-rejected">Отклонено</span></td>
+                                        <td>19.12.2024</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1">Просмотреть</button>
+                                            <button class="btn btn-sm btn-success">Одобрить</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">Предыдущая</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Следующая</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

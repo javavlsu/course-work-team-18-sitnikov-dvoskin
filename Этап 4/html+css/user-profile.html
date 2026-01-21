@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль пользователя</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">MovieHub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="search.html">Поиск</a></li>
+                    <li class="nav-item"><a class="nav-link" href="movies.html">Фильмы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="series.html">Сериалы</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="login.html">Вход</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.html">Регистрация</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <div class="row mb-5">
+            <div class="col-md-3 text-center">
+                <div class="user-avatar mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem;">АБ</div>
+                <h3>Алексей Б.</h3>
+                <p class="text-muted">@alex_b</p>
+                <div class="mt-4">
+                    <div class="stats-card mb-3">
+                        <div class="stats-number">45</div>
+                        <div class="text-muted">Рецензий</div>
+                    </div>
+                    <div class="stats-card mb-3">
+                        <div class="stats-number">12</div>
+                        <div class="text-muted">Подборок</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number">234</div>
+                        <div class="text-muted">Оценок</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#reviews">Рецензии</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#playlists">Подборки</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#ratings">Оценки</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="reviews">
+                        <div class="review-card mb-3">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="content-placeholder" style="width: 80px; height: 120px; flex-shrink: 0;"></div>
+                                <div class="ms-3 flex-grow-1">
+                                    <h5 class="mb-2">Отличный фильм!</h5>
+                                    <p class="mb-2">Краткое описание рецензии...</p>
+                                    <div class="d-flex align-items-center">
+                                        <span class="rating-badge me-2">5</span>
+                                        <span class="text-muted small">2 дня назад</span>
+                                        <span class="text-muted small ms-3">👍 12</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-card mb-3">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="content-placeholder" style="width: 80px; height: 120px; flex-shrink: 0;"></div>
+                                <div class="ms-3 flex-grow-1">
+                                    <h5 class="mb-2">Хороший фильм</h5>
+                                    <p class="mb-2">Краткое описание рецензии...</p>
+                                    <div class="d-flex align-items-center">
+                                        <span class="rating-badge me-2">4</span>
+                                        <span class="text-muted small">5 дней назад</span>
+                                        <span class="text-muted small ms-3">👍 8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="playlists">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="playlist-card">
+                                    <div class="playlist-cover"></div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Мои любимые фильмы</h5>
+                                        <p class="text-muted small mb-0">15 фильмов</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="playlist-card">
+                                    <div class="playlist-cover"></div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Триллеры</h5>
+                                        <p class="text-muted small mb-0">8 фильмов</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="ratings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex">
+                                            <div class="content-placeholder" style="width: 60px; height: 90px; flex-shrink: 0;"></div>
+                                            <div class="ms-3 flex-grow-1">
+                                                <div class="fw-bold">Название фильма</div>
+                                                <div class="text-muted small">2024</div>
+                                                <span class="rating-badge" style="font-size: 0.75rem;">5</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex">
+                                            <div class="content-placeholder" style="width: 60px; height: 90px; flex-shrink: 0;"></div>
+                                            <div class="ms-3 flex-grow-1">
+                                                <div class="fw-bold">Название фильма</div>
+                                                <div class="text-muted small">2023</div>
+                                                <span class="rating-badge" style="font-size: 0.75rem;">4</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

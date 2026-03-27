@@ -1,0 +1,32 @@
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# === Build ===
+target/
+build/
+*.class
+*.jar
+*.war
+
+# === Maven ===
+.mvn/
+mvnw
+mvnw.cmd
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === PlantUML generated ===
+*.puml
+
+# === Logs ===
+*.log
+
+# === Claude ===
+.claude/

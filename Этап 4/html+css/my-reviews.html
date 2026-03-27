@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои рецензии</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">MovieHub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="search.html">Поиск</a></li>
+                    <li class="nav-item"><a class="nav-link" href="movies.html">Фильмы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="series.html">Сериалы</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="profile.html">Профиль</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Мои рецензии</h1>
+            <a href="review-create.html" class="btn btn-primary">Написать рецензию</a>
+        </div>
+
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#published">Опубликованные</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#drafts">Черновики</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#moderation">На модерации</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="published">
+                <div class="review-card mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="content-placeholder" style="width: 80px; height: 120px; flex-shrink: 0;"></div>
+                        <div class="ms-3 flex-grow-1">
+                            <h5 class="mb-2">Отличный фильм!</h5>
+                            <p class="mb-2">Краткое описание рецензии...</p>
+                            <div class="d-flex align-items-center">
+                                <span class="rating-badge me-2">5</span>
+                                <span class="badge badge-published me-2">Опубликовано</span>
+                                <span class="text-muted small">2 дня назад</span>
+                                <span class="text-muted small ms-3">👍 12</span>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <a href="review-edit.html" class="btn btn-sm btn-outline-primary">Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-card mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="content-placeholder" style="width: 80px; height: 120px; flex-shrink: 0;"></div>
+                        <div class="ms-3 flex-grow-1">
+                            <h5 class="mb-2">Хороший фильм</h5>
+                            <p class="mb-2">Краткое описание рецензии...</p>
+                            <div class="d-flex align-items-center">
+                                <span class="rating-badge me-2">4</span>
+                                <span class="badge badge-published me-2">Опубликовано</span>
+                                <span class="text-muted small">5 дней назад</span>
+                                <span class="text-muted small ms-3">👍 8</span>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <a href="review-edit.html" class="btn btn-sm btn-outline-primary">Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="drafts">
+                <div class="review-card mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="content-placeholder" style="width: 80px; height: 120px; flex-shrink: 0;"></div>
+                        <div class="ms-3 flex-grow-1">
+                            <h5 class="mb-2">Черновик рецензии</h5>
+                            <p class="mb-2">Незавершенная рецензия...</p>
+                            <div class="d-flex align-items-center">
+                                <span class="badge badge-draft me-2">Черновик</span>
+                                <span class="text-muted small">1 неделю назад</span>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <a href="review-edit.html" class="btn btn-sm btn-outline-primary">Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="moderation">
+                <div class="review-card mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="content-placeholder" style="width: 80px; height: 120px; flex-shrink: 0;"></div>
+                        <div class="ms-3 flex-grow-1">
+                            <h5 class="mb-2">Рецензия на модерации</h5>
+                            <p class="mb-2">Ожидает проверки...</p>
+                            <div class="d-flex align-items-center">
+                                <span class="badge badge-moderation me-2">На модерации</span>
+                                <span class="text-muted small">3 дня назад</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

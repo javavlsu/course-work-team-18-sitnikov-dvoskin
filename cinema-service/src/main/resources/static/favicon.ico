@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="MovieHub">
+  <rect width="32" height="32" rx="7" fill="#0a0a0c"/>
+  <text x="16" y="17" text-anchor="middle" dominant-baseline="central"
+        font-family="'Inter','Helvetica Neue',Arial,sans-serif"
+        font-weight="900" font-size="22" fill="#7B5CFF"
+        letter-spacing="-1">M</text>
+</svg>

@@ -11,6 +11,7 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "series")
+@PrimaryKeyJoinColumn(name = "content_id")
 public class Series extends Content {
 
     /** Общее количество сезонов */

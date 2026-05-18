@@ -91,4 +91,25 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
      * @return количество оценок для данного контента
      */
     long countByContentId(Long contentId);
+
+    // =================================================================
+    // be-recs: расширения для алгоритма рекомендаций
+    // =================================================================
+
+    /**
+     * Возвращает все оценки для набора контентов в одном запросе.
+     *
+     * <p>Используется CF-алгоритмом для построения матрицы user-item.</p>
+     */
+    @Query("SELECT r FROM Rating r WHERE r.content.id IN :contentIds")
+    List<Rating> findAllByContentIds(@Param("contentIds") List<Long> contentIds);
+
+    /**
+     * Возвращает все опубликованные оценки одной выборкой.
+     *
+     * <p>Используется CF-алгоритмом для построения user-item матрицы целиком.
+     * Подходит для небольших и средних объёмов данных (курсовый проект, ~1k оценок).</p>
+     */
+    @Query("SELECT r FROM Rating r")
+    List<Rating> findAllRatings();
 }

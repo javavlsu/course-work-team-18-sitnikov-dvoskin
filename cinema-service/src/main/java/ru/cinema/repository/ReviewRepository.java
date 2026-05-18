@@ -98,6 +98,14 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByStatusOrderByLikeCountDesc(ReviewStatus status, Pageable pageable);
 
     /**
+     * Все опубликованные рецензии — используется тренером SVD-модели рекомендаций
+     * для построения матрицы наблюдений (review.ratingValue трактуется как
+     * полноценная оценка с дополнительным confidence-весом за лайки).
+     */
+    @Query("SELECT r FROM Review r WHERE r.status = :status AND r.ratingValue IS NOT NULL")
+    List<Review> findAllPublishedWithRating(@Param("status") ReviewStatus status);
+
+    /**
      * Подсчитывает количество рецензий для указанного контента.
      *
      * <p>Используется для отображения счётчика рецензий на карточке контента.</p>

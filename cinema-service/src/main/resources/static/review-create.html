@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Новая рецензия · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Pattern: Medium article writer (large title input, big body textarea, minimal chrome).
+    Pattern: Letterboxd "Add review" (rating stars + body + Save draft / Publish).
+
+    Scope: только title, text, ratingValue, contentId. БЕЗ spoiler-toggle —
+    в Review entity такого поля нет.
+  -->
+  <main class="container container-narrow my-4 my-lg-5">
+
+    <nav class="mb-3">
+      <a href="/me/reviews" class="subtle small">← К моим рецензиям</a>
+    </nav>
+
+    <header class="mb-4">
+      <span class="eyebrow">Новая запись</span>
+      <h1>Напиши рецензию</h1>
+      <p class="text-muted" id="content-info">Сначала выберите фильм…</p>
+    </header>
+
+    <div class="auth-alert" id="form-error" hidden></div>
+    <div class="auth-alert is-success" id="form-success" hidden></div>
+
+    <!-- Content selector (если ?contentId=... — uskip; иначе показываем typeahead) -->
+    <div class="card mb-4" id="content-picker-card">
+      <div class="card-body">
+        <label class="form-label">Фильм или сериал</label>
+        <input type="text" class="form-control" id="content-search" placeholder="Начните вводить название…" autocomplete="off">
+        <div class="form-help">Введите минимум 2 символа</div>
+        <div id="content-suggestions" class="mt-3"></div>
+      </div>
+    </div>
+
+    <form id="review-form">
+      <div class="mb-4">
+        <label class="form-label">Оценка</label>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <div class="star-rating" id="stars" data-star-rating></div>
+          <div class="text-gold mono" id="stars-val" style="font-size:18px">— / 10</div>
+        </div>
+        <div class="form-help">От 1 до 10</div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="r-title">Заголовок</label>
+        <input class="form-control form-control-lg" type="text" id="r-title" maxlength="200" placeholder="Один кадр и три акта">
+        <div class="form-help"><span id="title-counter">0</span> / 200</div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="r-body">Текст рецензии</label>
+        <textarea class="form-control" id="r-body" rows="14" placeholder="Что зацепило? Что разочаровало? Какие приёмы режиссёра показались сильными или слабыми?…"></textarea>
+        <div class="form-help"><span id="body-counter">0</span> символов</div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <a href="/me/reviews" class="btn btn-ghost">Отмена</a>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-light" id="save-draft">Сохранить черновик</button>
+          <button type="submit" class="btn btn-primary">Опубликовать</button>
+        </div>
+      </div>
+    </form>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-review-create.js"></script>
+</body>
+</html>

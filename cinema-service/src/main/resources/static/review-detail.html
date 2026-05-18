@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Рецензия · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Pattern: Medium article (refero search "medium article reading layout"):
+    narrow column 720px, big serif/sans display headline, author block, prose body.
+    Pattern: Letterboxd review (poster + score-pill + reading layout).
+  -->
+  <main class="container my-4 my-lg-5">
+
+    <article class="review-article" id="article">
+
+      <!-- Hero block (poster mini + content link) -->
+      <a class="list-row mb-4" id="content-link" href="#">
+        <div id="poster-mount" style="width:64px;flex-shrink:0;">
+          <div class="poster poster-row"><div class="skeleton" style="width:100%;height:100%;"></div></div>
+        </div>
+        <div class="list-row-body">
+          <div class="text-muted small">Рецензия на</div>
+          <div class="list-row-title" id="content-title">Загрузка…</div>
+          <div class="text-muted small" id="content-meta"></div>
+        </div>
+      </a>
+
+      <header class="review-article-header">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span class="score-pill score-pill-lg"><span class="score-num" id="score-num">—</span><span class="score-of">/10</span></span>
+          <span class="badge" id="status-badge"></span>
+        </div>
+        <h1 id="r-title">Загрузка…</h1>
+
+        <div class="review-article-meta">
+          <a class="review-article-author" id="author-link" href="#">
+            <span class="user-avatar" id="author-avatar">?</span>
+            <div>
+              <div class="author-name" id="author-name">…</div>
+              <div class="author-handle" id="author-handle">@…</div>
+            </div>
+          </a>
+          <span class="text-muted small mono" id="r-date"></span>
+          <span class="text-muted small mono" id="r-views"></span>
+        </div>
+      </header>
+
+      <div class="prose" id="r-body"></div>
+
+      <!-- Author actions (только если автор смотрит свою рецензию) -->
+      <div class="d-flex gap-2 mt-5" id="author-actions" hidden>
+        <a class="btn btn-outline-light btn-sm" id="edit-link" href="#">Редактировать</a>
+        <button class="btn btn-outline-danger btn-sm" id="delete-btn">Удалить</button>
+      </div>
+
+      <!-- Like / interaction -->
+      <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+        <button class="btn btn-outline-gold" id="like-btn">♥ <span id="like-count">0</span></button>
+        <a class="btn btn-ghost" href="/me/reviews">К моим рецензиям</a>
+      </div>
+    </article>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-review-detail.js"></script>
+</body>
+</html>

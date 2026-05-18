@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Вход · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Pattern: Spotify Web Player login (refero search "spotify login dark") — centered card,
+    big bold heading, single CTA gold button, divider with eyebrow text.
+    Pattern: Apple ID sign-in (apple.com/account) — minimal form, large input, no marketing.
+  -->
+  <main class="auth-shell">
+    <section class="auth-card g-reveal" aria-labelledby="login-title">
+      <h1 id="login-title">С возвращением</h1>
+      <p class="auth-sub">Войдите, чтобы продолжить просмотр</p>
+
+      <div class="auth-alert" id="login-error" hidden></div>
+
+      <form id="login-form" class="g-reveal-group" novalidate>
+        <div class="mb-4">
+          <label class="form-label" for="login-id">Email или имя пользователя</label>
+          <input class="form-control" type="text" id="login-id" name="emailOrUsername"
+                 autocomplete="username" required minlength="3" autofocus>
+          <div class="invalid-feedback">Введите email или имя пользователя</div>
+        </div>
+
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="form-label" for="login-pw">Пароль</label>
+            <!-- Pattern: Deezer right-aligned forgotten link -->
+            <a href="#" class="small text-muted mb-2">Забыли пароль?</a>
+          </div>
+          <input class="form-control" type="password" id="login-pw" name="password"
+                 autocomplete="current-password" required minlength="8">
+          <div class="invalid-feedback">Пароль не короче 8 символов</div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="login-submit">Войти</button>
+      </form>
+
+      <div class="auth-divider">или</div>
+
+      <div class="text-center">
+        <p class="small text-muted mb-3">Нет аккаунта?</p>
+        <a class="btn btn-outline-light" href="/register">Создать профиль</a>
+      </div>
+    </section>
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-login.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!--
+  Единый footer для всех 21 страницы MovieHub.
+  Подключается через <footer data-include="footer"></footer> + /js/partials.js.
+  Pattern: Letterboxd footer (multi-column links + brand).
+-->
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-12 col-md-4">
+        <a class="g-nav-brand" href="/" aria-label="MovieHub — главная">
+          <span class="g-brand-circle" aria-hidden="true">
+            <svg class="g-brand-mark" width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M12 1L13.8 9.2L22 11L13.8 12.8L12 21L10.2 12.8L2 11L10.2 9.2Z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="g-brand-text">MovieHub</span>
+        </a>
+        <p class="footer-tagline">
+          Каталог, рецензии и тематические подборки кино без рекламы.
+        </p>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <div class="footer-col-title">Каталог</div>
+        <ul class="footer-links">
+          <li><a href="/catalog?type=MOVIE">Фильмы</a></li>
+          <li><a href="/catalog?type=SERIES">Сериалы</a></li>
+          <li><a href="/catalog">Поиск</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <div class="footer-col-title">Сообщество</div>
+        <ul class="footer-links">
+          <li><a href="/me/reviews">Мои рецензии</a></li>
+          <li><a href="/me/playlists">Мои подборки</a></li>
+          <li><a href="/profile">Профиль</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <div class="footer-col-title">Аккаунт</div>
+        <ul class="footer-links" data-auth-guest>
+          <li><a href="/login">Вход</a></li>
+          <li><a href="/register">Регистрация</a></li>
+        </ul>
+        <ul class="footer-links" data-auth-user hidden>
+          <li><a href="/profile">Профиль</a></li>
+          <li><a href="#" data-auth-logout>Выйти</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 MovieHub</span>
+    </div>
+  </div>
+</footer>

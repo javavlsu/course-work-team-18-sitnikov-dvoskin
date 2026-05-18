@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Карточка фильма · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Detail page V2 — redesigned per docs/design.md + Refero patterns:
+      - Apple TV "Outcome"  (0d352bd5): full-bleed billboard, bottom-anchored title
+      - Apple TV doc        (5c3c2cab): pill primary + 44px circular ghost icons
+      - HBO Max v2          (819e478f): 2-layer hero overlay (dark left, purple right),
+                                         6-col similar grid (not sidebar rail)
+      - Record Club / Letterboxd (28262e8b): big tier-colored rating number + votes
+      - Netflix Games       (b23fed35): full-width single-column production facts
+
+    Order: Hero billboard → 4-up stat row → Reviews → Similar grid → Facts → Comments.
+  -->
+  <main>
+
+    <!-- 1. HERO (общий фон Aurora, как на главной) ===================== -->
+    <section class="detail-billboard">
+      <div class="g-container detail-hero-inner">
+        <a href="/movies" class="detail-back-link" id="back-link">К каталогу</a>
+
+        <div class="detail-hero-grid">
+          <!-- Poster -->
+          <div class="detail-hero-poster" id="poster-mount">
+            <div class="poster poster-lg"><div class="skeleton" style="width:100%;height:100%;"></div></div>
+          </div>
+
+          <!-- Info column -->
+          <div class="detail-hero-info">
+            <h1 class="detail-hero-title" id="hero-title">
+              <span class="skeleton d-inline-block" style="width:60%;height:48px;vertical-align:middle;"></span>
+            </h1>
+            <div class="detail-orig-title" id="hero-original"></div>
+
+            <!-- Apple TV inline meta-line: Тип • Год • Длительность • Страна • Язык • IMDb -->
+            <div class="detail-meta-line" id="meta-line"></div>
+
+            <!-- Big tier-colored rating number (Letterboxd / Record Club) -->
+            <div class="detail-rating-cluster" id="rating-cluster" hidden>
+              <span id="rating-sparkle" aria-hidden="true"></span>
+              <span class="big" id="rating-big">—</span>
+              <span class="of">/10</span>
+              <span class="votes" id="rating-votes"></span>
+            </div>
+
+            <p class="detail-hero-lead" id="hero-description"></p>
+
+            <div class="detail-tags" id="tag-row"></div>
+
+            <!-- Pill primary CTA + 44px circular ghost icons (Apple TV) -->
+            <div class="detail-actions" id="actions">
+              <a href="#" id="cta-write-review" class="g-btn g-btn-primary">Написать рецензию</a>
+
+              <button class="g-icon-btn" id="cta-rate" data-bs-toggle="modal" data-bs-target="#rateModal" aria-label="Поставить оценку" title="Поставить оценку">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.27 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+
+              <button class="g-icon-btn" id="cta-add-playlist" aria-label="В подборку" title="Добавить в подборку">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+
+              <button class="g-icon-btn" id="cta-share" aria-label="Поделиться" title="Поделиться ссылкой">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13"/><path d="M7 8l5-5 5 5"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
+              </button>
+            </div>
+
+            <!-- My rating chip -->
+            <div class="my-rating-row" id="my-rating-row" hidden>
+              <span class="my-rating-label">Моя оценка</span>
+              <span class="score-pill"><span class="score-num" id="my-rating-num">—</span><span class="score-of">/10</span></span>
+              <button class="g-btn g-btn-ghost g-btn-sm" id="my-rating-edit">Изменить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS ======================================================= -->
+    <section class="g-section g-reveal" id="reviews-section">
+      <div class="g-container">
+        <header class="g-section-head">
+          <div><h2>Рецензии</h2></div>
+          <a href="#" id="all-reviews-link" class="g-link">Все рецензии</a>
+        </header>
+        <div id="reviews-mount" class="reviews-list" data-mount>
+          <div class="review-card"><div class="skeleton" style="height:120px;"></div></div>
+          <div class="review-card"><div class="skeleton" style="height:120px;"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SIMILAR (6-col poster grid, not sidebar rail) ================ -->
+    <section class="g-section g-reveal" id="similar-section">
+      <div class="g-container">
+        <header class="g-section-head">
+          <div><h2>Похожее</h2></div>
+          <a href="/movies" class="g-link">Открыть каталог</a>
+        </header>
+        <div class="row g-3 g-md-4" id="similar-mount" data-mount>
+          <div class="col-6 col-md-4 col-lg-2"><div class="poster"><div class="skeleton" style="width:100%;height:100%;"></div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="poster"><div class="skeleton" style="width:100%;height:100%;"></div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="poster"><div class="skeleton" style="width:100%;height:100%;"></div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="poster"><div class="skeleton" style="width:100%;height:100%;"></div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="poster"><div class="skeleton" style="width:100%;height:100%;"></div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="poster"><div class="skeleton" style="width:100%;height:100%;"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMENTS ====================================================== -->
+    <section class="g-section g-reveal">
+      <div class="g-container">
+        <header class="g-section-head">
+          <div><h2>Комментарии</h2></div>
+          <span class="g-eyebrow" id="comments-count">0</span>
+        </header>
+
+        <div class="comments-compose" id="compose-card">
+          <div id="compose-body">
+            <!-- JS render: textarea+button или CTA «войти» -->
+          </div>
+        </div>
+
+        <div id="comments-mount" class="comments-list" data-mount>
+          <article class="comment-card">
+            <div class="comment-avatar-wrap"><div class="skeleton" style="width:36px;height:36px;border-radius:50%;"></div></div>
+            <div class="comment-body-wrap">
+              <div class="skeleton" style="height:14px;width:30%;margin-bottom:10px;"></div>
+              <div class="skeleton" style="height:12px;width:90%;margin-bottom:6px;"></div>
+              <div class="skeleton" style="height:12px;width:70%;"></div>
+            </div>
+          </article>
+          <article class="comment-card">
+            <div class="comment-avatar-wrap"><div class="skeleton" style="width:36px;height:36px;border-radius:50%;"></div></div>
+            <div class="comment-body-wrap">
+              <div class="skeleton" style="height:14px;width:25%;margin-bottom:10px;"></div>
+              <div class="skeleton" style="height:12px;width:80%;"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rate modal — interactive 1..10 stars -->
+  <div class="modal fade" id="rateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-strong); border-radius:var(--r-xl)">
+        <div class="modal-body p-4">
+          <h4 class="mb-2 text-center">Поставь оценку</h4>
+          <p class="text-center text-muted small mb-4">От 1 до 10 — как в IMDb</p>
+          <div class="star-rating justify-content-center d-flex" id="stars" data-star-rating></div>
+          <div class="text-center mt-3 mono text-gold" id="rate-val" style="font-size:20px">—</div>
+          <div class="d-flex gap-2 justify-content-center mt-4">
+            <button class="g-btn g-btn-ghost" data-bs-dismiss="modal">Отмена</button>
+            <button class="g-btn g-btn-primary" id="save-rating">Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add-to-playlist modal -->
+  <div class="modal fade" id="playlistModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-strong); border-radius:var(--r-xl)">
+        <div class="modal-body p-4">
+          <h4 class="mb-3">Добавить в подборку</h4>
+          <div id="playlist-modal-body">
+            <div class="skeleton" style="height:48px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-content-detail.js"></script>
+</body>
+</html>

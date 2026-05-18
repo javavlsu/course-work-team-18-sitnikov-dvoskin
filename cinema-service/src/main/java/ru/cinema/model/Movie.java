@@ -13,6 +13,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "movies")
+@PrimaryKeyJoinColumn(name = "content_id")
 public class Movie extends Content {
 
     /** Продолжительность фильма в минутах */

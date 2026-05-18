@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Каталог · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Unified catalog: search + type + genre + sort в одном экране.
+    URL: /catalog?q=...&type=MOVIE|SERIES&tag=N&sort=new|popular|top|alpha
+    Старые /movies, /series, /search — редиректы сюда.
+  -->
+  <main class="container my-4 my-lg-5">
+
+    <header class="mb-4 g-reveal-group">
+      <span class="eyebrow">Каталог</span>
+      <h1>Фильмы и сериалы</h1>
+      <p class="lead text-muted">Все 200+ тайтлов в одном месте — ищи по названию, фильтруй по жанру и типу, сортируй как удобно.</p>
+    </header>
+
+    <div class="search-hero g-reveal-group">
+      <div class="search-field">
+        <svg class="search-field-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="q-input" placeholder="Найти фильм или сериал…" autocomplete="off" spellcheck="false" aria-label="Поиск">
+        <button type="button" class="search-field-clear" id="q-clear" aria-label="Очистить" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="filter-rail-group" id="type-group">
+        <button class="filter-chip is-active" data-type="">Все</button>
+        <button class="filter-chip" data-type="MOVIE">Фильмы</button>
+        <button class="filter-chip" data-type="SERIES">Сериалы</button>
+      </div>
+    </div>
+
+    <div class="catalog-toolbar">
+      <div class="filter-rail-group" id="tag-group">
+        <button class="filter-chip is-active" data-tag="">Все жанры</button>
+        <span class="text-muted small">загрузка…</span>
+      </div>
+      <div class="catalog-sort" data-sort-root>
+        <button class="catalog-sort-trigger" type="button" data-sort-trigger aria-haspopup="menu" aria-expanded="false">
+          <span class="catalog-sort-label">Сортировка:</span>
+          <span class="catalog-sort-value" data-sort-value>Новые</span>
+          <svg class="catalog-sort-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="catalog-sort-menu" data-sort-menu role="menu" aria-label="Сортировка" hidden>
+          <button class="catalog-sort-option is-active" role="menuitemradio" aria-checked="true"  data-sort="new">Новые</button>
+          <button class="catalog-sort-option"           role="menuitemradio" aria-checked="false" data-sort="popular">Популярные</button>
+          <button class="catalog-sort-option"           role="menuitemradio" aria-checked="false" data-sort="top">Высокий рейтинг</button>
+          <button class="catalog-sort-option"           role="menuitemradio" aria-checked="false" data-sort="alpha">А-Я</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-meta">
+      <span id="result-count">—</span>
+    </div>
+
+    <div class="row g-4 g-lg-3" id="grid"></div>
+
+    <div id="grid-sentinel" aria-hidden="true"></div>
+    <div id="grid-end" class="catalog-end" hidden>Это всё</div>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-catalog.js"></script>
+</body>
+</html>

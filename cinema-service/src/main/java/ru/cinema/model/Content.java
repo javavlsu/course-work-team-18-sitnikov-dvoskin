@@ -43,6 +43,14 @@ public class Content {
     @Column(name = "poster_url", length = 500)
     private String posterUrl;
 
+    /**
+     * Флаг «постер битый» — выставляется клиентом через
+     * POST /api/v1/content/{id}/report-broken-poster, когда {@code <img>}
+     * с posterUrl не загрузился. Запись исключается из публичных list-выдач.
+     */
+    @Column(name = "poster_broken", nullable = false)
+    private boolean posterBroken = false;
+
     @Column(name = "average_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
 
@@ -138,6 +146,9 @@ public class Content {
 
     public String getPosterUrl() { return posterUrl; }
     public void setPosterUrl(String posterUrl) { this.posterUrl = posterUrl; }
+
+    public boolean isPosterBroken() { return posterBroken; }
+    public void setPosterBroken(boolean posterBroken) { this.posterBroken = posterBroken; }
 
     public BigDecimal getAverageRating() { return averageRating; }
     public void setAverageRating(BigDecimal averageRating) { this.averageRating = averageRating; }

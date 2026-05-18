@@ -136,6 +136,11 @@ CREATE INDEX IF NOT EXISTS idx_content_type ON content(content_type);
 CREATE INDEX IF NOT EXISTS idx_content_release_year ON content(release_year);
 CREATE INDEX IF NOT EXISTS idx_content_avg_rating ON content(average_rating);
 
+-- Флаг битой обложки. Клиент репортит через POST /api/v1/content/{id}/report-broken-poster
+-- (img onerror), список-эндпоинты потом исключают такие записи из выдачи.
+ALTER TABLE content ADD COLUMN IF NOT EXISTS poster_broken BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX IF NOT EXISTS idx_content_poster_broken ON content(poster_broken);
+
 CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_content ON reviews(content_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_status ON reviews(status);

@@ -3,6 +3,7 @@ package ru.cinema.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -29,7 +30,10 @@ import java.util.Optional;
  * </ul>
  */
 @Repository
-public interface ContentRepository extends JpaRepository<Content, Long> {
+public interface ContentRepository extends JpaRepository<Content, Long>, JpaSpecificationExecutor<Content> {
+
+    /** Подсчёт по типу контента. */
+    long countByContentType(ContentType contentType);
 
     /**
      * Возвращает постраничный список контента с указанным статусом.
@@ -153,4 +157,64 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
      * @return количество единиц контента с указанным статусом
      */
     long countByStatus(ContentStatus status);
+
+    // =================================================================
+    // Расширения be-fts / be-recs
+    // =================================================================
+
+    /**
+     * PostgreSQL full-text search — шаг 1: нативный запрос вернёт только id, отсортированные по
+     * релевантности (ts_rank). Шаг 2 ({@link #findAllById(Iterable)}) поднимает полноценные
+     * JOINED-сущности (Movie / Series). Нативный запрос на JOINED-иерархии без явного
+     * SqlResultSetMapping ломается на discriminator-колонке clazz_, поэтому работаем через id.
+     *
+     * <p>Использует словарь 'russian' и GIN-индекс idx_content_fts. Только PUBLISHED-контент.</p>
+     */
+    @Query(
+            value = """
+                    SELECT c.id FROM content c
+                    WHERE c.status = 'PUBLISHED'
+                      AND c.poster_broken = FALSE
+                      AND to_tsvector('russian',
+                              coalesce(c.title,'') || ' ' ||
+                              coalesce(c.original_title,'') || ' ' ||
+                              coalesce(c.description,'')
+                          ) @@ plainto_tsquery('russian', :q)
+                    ORDER BY ts_rank(
+                              to_tsvector('russian',
+                                  coalesce(c.title,'') || ' ' ||
+                                  coalesce(c.original_title,'') || ' ' ||
+                                  coalesce(c.description,'')),
+                              plainto_tsquery('russian', :q)
+                          ) DESC
+                    """,
+            countQuery = """
+                    SELECT count(*) FROM content c
+                    WHERE c.status = 'PUBLISHED'
+                      AND c.poster_broken = FALSE
+                      AND to_tsvector('russian',
+                              coalesce(c.title,'') || ' ' ||
+                              coalesce(c.original_title,'') || ' ' ||
+                              coalesce(c.description,'')
+                          ) @@ plainto_tsquery('russian', :q)
+                    """,
+            nativeQuery = true
+    )
+    Page<Long> fullTextSearchIds(@Param("q") String q, Pageable pageable);
+
+    /**
+     * Загружает все PUBLISHED-объекты вместе с тегами одной выборкой.
+     *
+     * <p>Используется алгоритмом рекомендаций (content-based) для построения
+     * векторов «контент → теги» без N+1 запросов.</p>
+     */
+    @Query("SELECT DISTINCT c FROM Content c LEFT JOIN FETCH c.tags WHERE c.status = :status")
+    List<Content> findAllPublishedWithTags(@Param("status") ContentStatus status);
+
+    /**
+     * Возвращает PUBLISHED-контент, исключая указанные id.
+     *
+     * <p>Используется CF-алгоритмом рекомендаций для исключения уже оценённых юзером.</p>
+     */
+    List<Content> findAllByStatusAndIdNotIn(ContentStatus status, java.util.Collection<Long> excludeIds);
 }

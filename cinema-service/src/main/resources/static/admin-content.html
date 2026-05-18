@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Управление контентом · MovieHub Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!-- Pattern: Linear admin table — sticky header, sortable columns, status pills inline -->
+  <div class="admin-layout">
+    <div data-include="admin-sidebar"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-head">
+        <div>
+          <span class="eyebrow">Контент</span>
+          <h1>Фильмы и сериалы</h1>
+        </div>
+        <div class="text-muted small mono" id="content-count">—</div>
+      </div>
+
+      <div class="filter-rail-section">
+        <div class="filter-rail-label">Статус</div>
+        <div class="filter-rail-group" id="status-group">
+          <button class="filter-chip is-active" data-status="">Все</button>
+          <button class="filter-chip" data-status="PUBLISHED">Опубликованы</button>
+          <button class="filter-chip" data-status="DRAFT">Черновик</button>
+          <button class="filter-chip" data-status="HIDDEN">Скрыты</button>
+        </div>
+        <div class="filter-rail-label mt-2">Тип</div>
+        <div class="filter-rail-group" id="type-group">
+          <button class="filter-chip is-active" data-type="">Все</button>
+          <button class="filter-chip" data-type="MOVIE">Фильмы</button>
+          <button class="filter-chip" data-type="SERIES">Сериалы</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Тип</th>
+              <th>Год</th>
+              <th>★</th>
+              <th>Статус</th>
+              <th>Создан</th>
+              <th class="text-end">Действия</th>
+            </tr>
+          </thead>
+          <tbody id="content-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="pagination-mount"></div>
+    </main>
+  </div>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-admin-content.js"></script>
+</body>
+</html>

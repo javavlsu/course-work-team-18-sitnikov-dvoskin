@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Мои рецензии · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Pattern: Letterboxd "Your reviews" — список с poster-thumbnail слева,
+    title + meta + status badge + actions (edit/delete) справа.
+    Pattern: Goodreads my reviews — табы по статусу (draft/moderation/published).
+  -->
+  <main class="container my-4 my-lg-5">
+
+    <header class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div>
+        <span class="eyebrow">Кабинет</span>
+        <h1>Мои рецензии</h1>
+      </div>
+      <a href="/reviews/new" class="btn btn-primary">+ Новая рецензия</a>
+    </header>
+
+    <div class="tab-pills">
+      <button class="tab-pill is-active" data-status="">Все <span class="tab-count" id="cnt-all">0</span></button>
+      <button class="tab-pill" data-status="DRAFT">Черновики <span class="tab-count" id="cnt-draft">0</span></button>
+      <button class="tab-pill" data-status="MODERATION">На модерации <span class="tab-count" id="cnt-mod">0</span></button>
+      <button class="tab-pill" data-status="PUBLISHED">Опубликованы <span class="tab-count" id="cnt-pub">0</span></button>
+      <button class="tab-pill" data-status="REJECTED">Отклонены <span class="tab-count" id="cnt-rej">0</span></button>
+    </div>
+
+    <div id="reviews-mount"></div>
+
+    <div id="pagination-mount"></div>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-my-reviews.js"></script>
+</body>
+</html>

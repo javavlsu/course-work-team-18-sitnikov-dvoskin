@@ -35,6 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // Профиль текущего пользователя и просмотр чужого
         registry.addViewController("/profile").setViewName("forward:/profile.html");
+        registry.addViewController("/settings").setViewName("forward:/settings.html");
         registry.addViewController("/users/{username}").setViewName("forward:/user-profile.html");
         registry.addViewController("/me/reviews").setViewName("forward:/my-reviews.html");
         registry.addViewController("/me/playlists").setViewName("forward:/my-playlists.html");

@@ -30,6 +30,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinemadb
       SPRING_DATASOURCE_USERNAME: cinema
       SPRING_DATASOURCE_PASSWORD: cinema
+      APP_JWT_SECRET: NJ5ia1W5D0V5ZSCMl/+oqJnh76a5xOOQhEJ0HWgyn9JNASrvAreuFNAh94xR2KEH
     ports:
       - "8080:8080"
       - "35729:35729"

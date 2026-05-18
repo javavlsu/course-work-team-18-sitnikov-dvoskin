@@ -13,24 +13,6 @@
 (function () {
   'use strict';
 
-  let ME = null;
-
-  function reviewListItem(r) {
-    const cId = r.content && r.content.id;
-    const url = cId ? (r.content.contentType === 'SERIES' ? `/series/${cId}` : `/movies/${cId}`) : '#';
-    return `
-      <a class="list-row" href="/reviews/${r.id}">
-        <div class="list-row-body">
-          <div class="d-flex align-items-center gap-2 mb-1">
-            ${r.ratingValue ? `<span class="rating-badge">${r.ratingValue}</span>` : ''}
-            <span class="badge badge-${(r.status || 'PUBLISHED').toLowerCase()}">${r.status || 'PUBLISHED'}</span>
-          </div>
-          <div class="list-row-title">${UI.escapeHtml(r.title || 'Без названия')}</div>
-          <div class="text-muted small">${r.content ? UI.escapeHtml(r.content.title) : ''} · ${UI.formatDate(r.createdAt)}</div>
-        </div>
-        <div class="text-muted small">♥ ${r.likeCount || 0}</div>
-      </a>`;
-  }
 
   function playlistCard(p) {
     return `
@@ -50,34 +32,50 @@
   function fillStats(stats) {
     const tiles = document.getElementById('prof-stats');
     tiles.innerHTML = `
-      <div class="profile-stat-tile"><div class="num">${stats.reviewsCount || 0}</div><div class="label">Рецензии</div></div>
-      <div class="profile-stat-tile"><div class="num">${stats.playlistsCount || 0}</div><div class="label">Подборки</div></div>
+      <button type="button" class="profile-stat-tile" data-jump="reviews"><div class="num">${stats.reviewsCount || 0}</div><div class="label">Рецензии</div></button>
+      <button type="button" class="profile-stat-tile" data-jump="playlists"><div class="num">${stats.playlistsCount || 0}</div><div class="label">Подборки</div></button>
       <div class="profile-stat-tile"><div class="num">${stats.ratingsCount || 0}</div><div class="label">Оценки</div></div>
       <div class="profile-stat-tile"><div class="num">${stats.averageRatingGiven != null ? Number(stats.averageRatingGiven).toFixed(1) : '—'}</div><div class="label">Средняя</div></div>
     `;
+    tiles.querySelectorAll('[data-jump]').forEach(b => {
+      b.addEventListener('click', () => switchTab(b.dataset.jump));
+    });
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab-pill').forEach(t => t.classList.toggle('is-active', t.dataset.tab === name));
+    document.querySelectorAll('.tab-content').forEach(c => c.setAttribute('hidden', ''));
+    const target = document.getElementById('tab-' + name);
+    if (target) target.removeAttribute('hidden');
+    window.scrollTo({ top: document.querySelector('.tab-pills').offsetTop - 24, behavior: 'smooth' });
+  }
+
+  function renderMetaChips(me) {
+    const chips = [];
+    const role = me.role || 'USER';
+    chips.push(`<span class="profile-chip profile-chip-role profile-chip-${role.toLowerCase()}">${UI.escapeHtml(UI.roleLabel(role))}</span>`);
+    if (me.createdAt) chips.push(`<span class="profile-chip">с ${UI.formatDate(me.createdAt)}</span>`);
+    if (me.email) chips.push(`<span class="profile-chip profile-chip-muted">${UI.escapeHtml(me.email)}</span>`);
+    document.getElementById('prof-meta-chips').innerHTML = chips.join('');
   }
 
   async function loadMe() {
     try {
       const me = await API.me();
-      ME = me;
       document.getElementById('prof-name').textContent = me.username || 'Пользователь';
       document.getElementById('prof-handle').textContent = '@' + (me.username || 'user');
-      document.getElementById('prof-meta').textContent =
-        `${me.role || 'USER'} · с ${UI.formatDate(me.createdAt)} · ${me.email}`;
+      renderMetaChips(me);
       const av = document.querySelector('.profile-header .user-avatar');
-      if (av) av.textContent = (me.username || 'U').charAt(0).toUpperCase();
+      if (av) {
+        av.textContent = (me.username || 'U').charAt(0).toUpperCase();
+        av.style.setProperty('--avatar-hue', UI.avatarHue(me.username || ''));
+      }
 
       if (me.stats) fillStats(me.stats);
-
-      // Settings form prefill
-      document.getElementById('set-username').value = me.username || '';
-      document.getElementById('set-email').value = me.email || '';
 
       loadMyReviews(me.username);
       loadMyPlaylists(me.username);
     } catch (e) {
-      // 401 уже обработан в api.js — редирект на login
       console.error('[profile] me', e);
     }
   }
@@ -97,7 +95,10 @@
           ctaHref: '/reviews/new'
         });
       } else {
-        mount.innerHTML = items.map(reviewListItem).join('');
+        const seeMore = page.totalElements > items.length
+          ? `<a class="view-all-link" href="/me/reviews">Все рецензии (${page.totalElements}) →</a>`
+          : '';
+        mount.innerHTML = items.map(r => UI.reviewRow(r)).join('') + seeMore;
       }
     } catch (e) {
       mount.innerHTML = UI.errorState({ onRetry: () => loadMyReviews(username) });
@@ -118,7 +119,10 @@
           ctaHref: '/playlists/new'
         })}</div>`;
       } else {
-        mount.innerHTML = list.map(playlistCard).join('');
+        const seeMore = list.length >= 12
+          ? `<div class="col-12"><a class="view-all-link" href="/me/playlists">Все подборки →</a></div>`
+          : '';
+        mount.innerHTML = list.map(playlistCard).join('') + seeMore;
       }
     } catch (e) {
       mount.innerHTML = `<div class="col-12">${UI.errorState({ onRetry: () => loadMyPlaylists(username) })}</div>`;
@@ -126,45 +130,14 @@
   }
 
   function bindTabs() {
-    const tabs = document.querySelectorAll('.tab-pill');
-    tabs.forEach(t => {
-      t.addEventListener('click', () => {
-        tabs.forEach(x => x.classList.remove('is-active'));
-        t.classList.add('is-active');
-        document.querySelectorAll('.tab-content').forEach(c => c.setAttribute('hidden', ''));
-        const target = document.getElementById('tab-' + t.dataset.tab);
-        if (target) target.removeAttribute('hidden');
-      });
-    });
-  }
-
-  function bindSettings() {
-    const form = document.getElementById('settings-form');
-    const success = document.getElementById('settings-success');
-    form.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const username = document.getElementById('set-username').value.trim();
-      const email = document.getElementById('set-email').value.trim();
-      try {
-        const me = await API.patch('/users/me', { username, email });
-        Auth.user = me;
-        ME = me;
-        success.classList.add('is-success');
-        success.textContent = 'Сохранено';
-        success.removeAttribute('hidden');
-        setTimeout(() => success.setAttribute('hidden', ''), 2000);
-      } catch (e) {
-        success.classList.remove('is-success');
-        success.textContent = e.message || 'Не удалось сохранить';
-        success.removeAttribute('hidden');
-      }
+    document.querySelectorAll('.tab-pill').forEach(t => {
+      t.addEventListener('click', () => switchTab(t.dataset.tab));
     });
   }
 
   document.addEventListener('partials:ready', () => {
     if (!Auth.requireAuth()) return;
     bindTabs();
-    bindSettings();
     loadMe();
   });
 })();

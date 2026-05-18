@@ -16,20 +16,6 @@
 
   const username = getUsername();
 
-  function reviewRow(r) {
-    return `
-      <a class="list-row" href="/reviews/${r.id}">
-        <div class="list-row-body">
-          <div class="d-flex align-items-center gap-2 mb-1">
-            ${r.ratingValue ? `<span class="rating-badge">${r.ratingValue}</span>` : ''}
-          </div>
-          <div class="list-row-title">${UI.escapeHtml(r.title || 'Без названия')}</div>
-          <div class="text-muted small">${r.content ? UI.escapeHtml(r.content.title) : ''} · ${UI.formatDate(r.createdAt)}</div>
-        </div>
-        <div class="text-muted small">♥ ${r.likeCount || 0}</div>
-      </a>`;
-  }
-
   function playlistCard(p) {
     return `
       <div class="col-6 col-md-4 col-lg-3">
@@ -53,7 +39,7 @@
       document.title = `@${u.username} · MovieHub`;
       document.getElementById('pub-name').textContent = u.username;
       document.getElementById('pub-handle').textContent = '@' + u.username;
-      document.getElementById('pub-meta').textContent = `${u.role || 'USER'} · с ${UI.formatDate(u.createdAt)}`;
+      document.getElementById('pub-meta').textContent = `${UI.roleLabel(u.role)} · с ${UI.formatDate(u.createdAt)}`;
       document.getElementById('pub-avatar').textContent = (u.username || 'U').charAt(0).toUpperCase();
 
       const stats = u.stats || {};
@@ -85,7 +71,7 @@
       if (!items.length) {
         mount.innerHTML = UI.emptyState({ title: 'Этот пользователь ещё не писал рецензий' });
       } else {
-        mount.innerHTML = items.map(reviewRow).join('');
+        mount.innerHTML = items.map(r => UI.reviewRow(r, { hideStatus: true })).join('');
       }
     } catch (e) {
       mount.innerHTML = UI.errorState({ onRetry: loadReviews });

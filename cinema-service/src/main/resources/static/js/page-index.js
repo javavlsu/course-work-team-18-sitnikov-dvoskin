@@ -311,13 +311,18 @@
       if (Auth.isAuthenticated() && Auth.user && Auth.user.role === 'ADMIN') {
         try {
           const stats = await API.adminStats();
+          // DashboardStatsResponse.users — это UserStats{total, active, byRole},
+          // не число. Берём .total. На всякий случай поддерживаем плоские варианты.
+          let u = null;
           if (stats) {
-            const u = stats.users || stats.usersTotal || stats.totalUsers;
-            if (u != null) setStat('stat-users', u);
+            if (stats.users && typeof stats.users === 'object') u = stats.users.total;
+            else if (typeof stats.users === 'number') u = stats.users;
+            else if (stats.usersTotal != null) u = stats.usersTotal;
+            else if (stats.totalUsers != null) u = stats.totalUsers;
           }
+          if (u != null) setStat('stat-users', u);
         } catch (_) { /* silent */ }
       } else {
-        // Фолбэк: показываем оценочное число «30+» как guidance
         setStat('stat-users', '30+');
       }
     } catch (e) {

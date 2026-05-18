@@ -15,48 +15,7 @@
   const PAGE_SIZE = 20;
   const state = { status: '', page: 0 };
 
-  function statusBadge(s) {
-    const map = {
-      DRAFT: ['badge-draft', 'Черновик'],
-      MODERATION: ['badge-moderation', 'На модерации'],
-      PUBLISHED: ['badge-published', 'Опубликована'],
-      REJECTED: ['badge-rejected', 'Отклонена'],
-      HIDDEN: ['badge-hidden', 'Скрыта'],
-      DELETED: ['badge-deleted', 'Удалена']
-    };
-    const [cls, label] = map[s] || ['badge-draft', s];
-    return `<span class="badge ${cls}">${label}</span>`;
-  }
-
-  function row(r) {
-    const cId = r.content && r.content.id;
-    const cType = r.content && r.content.contentType;
-    const url = cId ? (cType === 'SERIES' ? `/series/${cId}` : `/movies/${cId}`) : '#';
-    const score = r.ratingValue != null ? `<span class="rating-badge me-2">${r.ratingValue}</span>` : '';
-    const canPublish = r.status === 'DRAFT';
-    return `
-      <div class="list-row" data-rid="${r.id}">
-        <div class="list-row-body">
-          <div class="d-flex align-items-center gap-2 mb-2">
-            ${score}${statusBadge(r.status)}
-          </div>
-          <div class="list-row-title">
-            <a href="/reviews/${r.id}" class="text-light">${UI.escapeHtml(r.title || 'Без названия')}</a>
-          </div>
-          <div class="text-muted small mb-2">
-            ${r.content ? `на «<a class="subtle" href="${url}">${UI.escapeHtml(r.content.title)}</a>»` : ''} · ${UI.formatDate(r.createdAt)}
-          </div>
-          <div class="text-muted small">
-            ${r.viewCount || 0} просмотров · ♥ ${r.likeCount || 0}
-          </div>
-        </div>
-        <div class="d-flex flex-column gap-2 align-items-end">
-          ${canPublish ? `<button class="btn btn-xs btn-outline-gold" data-action="publish" data-id="${r.id}">Опубликовать</button>` : ''}
-          <a class="btn btn-xs btn-outline-light" href="/reviews/${r.id}/edit">Редактировать</a>
-          <button class="btn btn-xs btn-outline-danger" data-action="delete" data-id="${r.id}">Удалить</button>
-        </div>
-      </div>`;
-  }
+  const row = (r) => UI.reviewRow(r, { actions: true });
 
   function setActiveTab() {
     document.querySelectorAll('.tab-pill').forEach(t => {

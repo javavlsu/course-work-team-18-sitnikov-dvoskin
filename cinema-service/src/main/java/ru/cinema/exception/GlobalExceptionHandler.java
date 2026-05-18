@@ -34,6 +34,12 @@ public class GlobalExceptionHandler {
                 .body(ApiError.of(403, "Forbidden", e.getMessage(), req.getRequestURI()));
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> unauthorized(UnauthorizedException e, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiError.of(401, "Unauthorized", e.getMessage(), req.getRequestURI()));
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiError> badCredentials(BadCredentialsException e, HttpServletRequest req) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

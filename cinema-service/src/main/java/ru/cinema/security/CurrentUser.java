@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import ru.cinema.exception.ForbiddenException;
+import ru.cinema.exception.UnauthorizedException;
 import ru.cinema.exception.NotFoundException;
 import ru.cinema.model.User;
 import ru.cinema.model.enums.UserRole;
@@ -28,10 +29,10 @@ public class CurrentUser {
         return p == null ? null : p.id();
     }
 
-    /** ID или 401-эквивалент (ForbiddenException). */
+    /** ID текущего юзера или 401. */
     public static Long requireUserId() {
         Long id = currentUserId();
-        if (id == null) throw new ForbiddenException("Требуется аутентификация");
+        if (id == null) throw new UnauthorizedException("Требуется аутентификация");
         return id;
     }
 

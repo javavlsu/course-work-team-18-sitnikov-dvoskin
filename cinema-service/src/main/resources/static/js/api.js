@@ -20,6 +20,35 @@
     }
   }
 
+  // Silent refresh: при 401 пробуем POST /auth/refresh с refreshToken (живёт 7 дней),
+  // обновляем access+refresh, повторяем исходный запрос. Все параллельные 401 ждут
+  // одну и ту же Promise — без штормового шквала refresh'ей.
+  let _refreshing = null;
+  async function refreshTokens() {
+    if (!global.Auth || !global.Auth.refreshToken) return false;
+    if (_refreshing) return _refreshing;
+    _refreshing = (async () => {
+      try {
+        const res = await fetch(`${BASE}/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ refreshToken: global.Auth.refreshToken })
+        });
+        if (!res.ok) return false;
+        const auth = await res.json();
+        if (!auth || !auth.accessToken) return false;
+        global.Auth.token = auth.accessToken;
+        if (auth.refreshToken) global.Auth.refreshToken = auth.refreshToken;
+        if (auth.user) global.Auth.user = auth.user;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    })();
+    try { return await _refreshing; }
+    finally { _refreshing = null; }
+  }
+
   async function request(path, opts = {}) {
     const url = path.startsWith('http') ? path : `${BASE}${path}`;
     const headers = {
@@ -37,9 +66,16 @@
     const res = await fetch(url, init);
 
     if (res.status === 401 && opts.requireAuth !== false) {
-      // токен умер / гость на защищённом эндпоинте → редирект на /login
+      const isAuthCall = typeof path === 'string' && path.startsWith('/auth/');
+      if (!isAuthCall && !opts._retried && global.Auth && global.Auth.refreshToken) {
+        const ok = await refreshTokens();
+        if (ok) {
+          return request(path, { ...opts, _retried: true });
+        }
+      }
       if (global.Auth) {
         global.Auth.token = null;
+        global.Auth.refreshToken = null;
         global.Auth.user = null;
       }
       const next = encodeURIComponent(location.pathname + location.search);

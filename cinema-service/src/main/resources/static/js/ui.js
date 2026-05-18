@@ -211,6 +211,96 @@
     } catch (e) { return v; }
   }
 
+  // ===== Role labels (USER/ADMIN/MODERATOR → русский) =====
+  const ROLE_LABELS = {
+    USER:      'Пользователь',
+    ADMIN:     'Администратор',
+    MODERATOR: 'Модератор'
+  };
+  function roleLabel(role) {
+    if (!role) return ROLE_LABELS.USER;
+    return ROLE_LABELS[role] || role;
+  }
+
+  // ===== Review row (общий компонент для /profile, /users/{x}, /me/reviews) =====
+  // Letterboxd "Your reviews" паттерн: постер слева, бейджи (оценка + статус) сверху,
+  // заголовок-ссылка на рецензию, мета (на чём + дата), excerpt 2 строки, статистика.
+  // opts.actions=true добавляет столбец справа с кнопками Опубликовать/Редактировать/Удалить
+  // для /me/reviews (обработчики кликов биндятся снаружи через data-action/data-id).
+
+  const REVIEW_STATUS_LABELS = {
+    DRAFT:      ['badge-draft',      'Черновик'],
+    MODERATION: ['badge-moderation', 'На модерации'],
+    PUBLISHED:  ['badge-published',  'Опубликована'],
+    REJECTED:   ['badge-rejected',   'Отклонена'],
+    HIDDEN:     ['badge-hidden',     'Скрыта'],
+    DELETED:    ['badge-deleted',    'Удалена']
+  };
+
+  function reviewStatusBadge(s) {
+    if (!s) return '';
+    const [cls, label] = REVIEW_STATUS_LABELS[s] || ['badge-draft', String(s)];
+    return `<span class="badge ${cls}">${label}</span>`;
+  }
+
+  function reviewRow(r, opts = {}) {
+    const { actions = false, hideStatus = false } = opts;
+    const reviewHref = `/reviews/${r.id}`;
+    const c = r.content || null;
+    const contentHref = c ? urlForContent(c) : null;
+
+    const posterInner = c && c.posterUrl
+      ? `<img src="${escapeHtml(c.posterUrl)}" alt="${escapeHtml(c.title || '')}" loading="lazy" onerror="this.parentNode.classList.add('is-empty');this.remove();">`
+      : '';
+    const poster = contentHref
+      ? `<a class="list-row-poster${posterInner ? '' : ' is-empty'}" href="${contentHref}" aria-label="${escapeHtml(c.title || '')}">${posterInner}</a>`
+      : `<div class="list-row-poster is-empty" aria-hidden="true"></div>`;
+
+    const rating = r.ratingValue != null
+      ? `<span class="rating-pill">${iconSparkle({ size: 11 })}<span class="rating-num">${r.ratingValue}</span></span>`
+      : '';
+    const status = hideStatus ? '' : reviewStatusBadge(r.status);
+
+    const onContent = c
+      ? `на «<a class="subtle" href="${contentHref}">${escapeHtml(c.title)}</a>»`
+      : '';
+    const dateStr = formatDate(r.createdAt);
+    const metaParts = [onContent, dateStr].filter(Boolean).join(' · ');
+
+    const excerpt = r.excerpt
+      ? `<p class="list-row-excerpt">${escapeHtml(r.excerpt)}</p>`
+      : '';
+
+    const stats = `${formatCount(r.viewCount || 0)} ${pluralize(r.viewCount || 0, ['просмотр','просмотра','просмотров'])}`
+      + ` · ${iconHeart({ size: 12 })} ${formatCount(r.likeCount || 0)}`;
+
+    const headerLine = (rating || status)
+      ? `<div class="d-flex align-items-center gap-2 mb-2">${rating}${status}</div>`
+      : '';
+
+    const body = `
+      <div class="list-row-body">
+        ${headerLine}
+        <div class="list-row-title"><a class="text-light" href="${reviewHref}">${escapeHtml(r.title || 'Без названия')}</a></div>
+        ${metaParts ? `<div class="list-row-meta mb-1">${metaParts}</div>` : ''}
+        ${excerpt}
+        <div class="list-row-meta list-row-stats">${stats}</div>
+      </div>`;
+
+    let actionsBlock = '';
+    if (actions) {
+      const canPublish = r.status === 'DRAFT';
+      actionsBlock = `
+        <div class="list-row-actions">
+          ${canPublish ? `<button class="btn btn-xs btn-outline-gold" data-action="publish" data-id="${r.id}">Опубликовать</button>` : ''}
+          <a class="btn btn-xs btn-outline-light" href="/reviews/${r.id}/edit">Редактировать</a>
+          <button class="btn btn-xs btn-outline-danger" data-action="delete" data-id="${r.id}">Удалить</button>
+        </div>`;
+    }
+
+    return `<div class="list-row" data-rid="${r.id}">${poster}${body}${actionsBlock}</div>`;
+  }
+
   // ===== Постер с реальной картинкой + typographic fallback =====
   // Если posterUrl нет ИЛИ изображение не загрузилось — карточка убирается
   // из грида целиком (см. posterFallback ниже). Без визуальных fallback'ов:
@@ -562,6 +652,9 @@
     formatDate,
     posterImg,
     posterFallback,
+    reviewStatusBadge,
+    reviewRow,
+    roleLabel,
     contentCard,
     contentCardCol,
     skeletonCard,

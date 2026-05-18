@@ -1127,29 +1127,25 @@ textarea.form-control:focus {
   letter-spacing: -0.025em;
 }
 
-/* Inline rating pill — liquid-glass (тот же материал, что .tag-badge и .badge),
-   используется в list-row рецензий. НЕ путать с .rating-badge: тот absolute
-   и якорится в .poster (для постеров). Этот — обычный inline-flex pill. */
+/* Inline rating pill — тот же ритм, что .badge (height/padding/font), искра
+   вместо точки-индикатора. Это inline-флаг рейтинга в списках/хедерах рецензий.
+   НЕ путать с .rating-badge: тот absolute и якорится в .poster (для постеров). */
 .rating-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 24px;
-  padding: 0 10px;
+  height: 22px;
+  padding: 0 9px;
   border-radius: 999px;
   font-family: var(--font-display);
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 700;
   font-feature-settings: "tnum";
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
+  line-height: 1;
   color: rgba(255,255,255,0.95);
-  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
-  border: 1px solid rgba(255,255,255,0.14);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.26),
-    inset 0 -1px 0 rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
 }
 .rating-pill .icon-sparkle {
   color: var(--accent-hover, #f5c361);
@@ -1519,52 +1515,92 @@ textarea.form-control:focus {
     inset 0 -1px 0 rgba(0, 0, 0, 0.10);
 }
 
-/* ===== Stats / dashboard cards (Gladia data clusters) =====
-   Refero ff920812 (Settings/Usage) — chart cards with subtle depth */
-.stats-card,
-.dashboard-stat {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 50%),
-    var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-card);
-  padding: 22px;
-  transition: border-color 200ms var(--ease), background 200ms var(--ease),
-              transform 200ms var(--ease);
-  position: relative;
-  overflow: hidden;
-}
-.dashboard-stat::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(80% 80% at 100% 0%, rgba(123, 92, 255, 0.06), transparent 60%);
-  pointer-events: none;
-}
-.stats-card:hover,
-.dashboard-stat:hover {
-  border-color: rgba(123, 92, 255, 0.3);
-  background:
-    linear-gradient(180deg, rgba(123, 92, 255, 0.04), transparent 60%),
-    var(--bg-card);
-  transform: translateY(-2px);
-}
-.stats-number,
-.dashboard-stat-number {
+/* ===== Admin dashboard — open layout в языке .g-stat-row главной =====
+   Никаких чёрных карточек: hairline-полоса с цифрами + лёгкие чипы-разбивки. */
+
+.dash-section { margin-bottom: clamp(36px, 4vw, 56px); }
+.dash-section-title {
   font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
   color: var(--text);
+  margin: 0 0 16px;
+}
+
+.dash-stat-row {
+  list-style: none;
+  margin: 0;
+  padding: 24px 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  gap: 0;
+}
+@media (min-width: 768px) {
+  .dash-stat-row { grid-template-columns: repeat(4, 1fr); }
+}
+.dash-stat-row > li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px clamp(14px, 2vw, 24px);
+  border-left: 1px solid rgba(255,255,255,0.06);
+}
+.dash-stat-row > li:first-child,
+.dash-stat-row > li:nth-child(3) { border-left: 0; }
+@media (min-width: 768px) {
+  .dash-stat-row > li:nth-child(3) { border-left: 1px solid rgba(255,255,255,0.06); }
+}
+@media (max-width: 767px) {
+  .dash-stat-row > li:nth-child(n+3) {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 16px;
+    margin-top: 8px;
+  }
+}
+.dash-stat-num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 3vw, 36px);
+  color: #fff;
   letter-spacing: -0.025em;
   line-height: 1;
-  margin-bottom: 6px;
   font-feature-settings: "tnum";
 }
-.dashboard-stat-label {
+.dash-stat-label {
+  font-size: 13px;
   color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: 500;
+}
+
+/* Breakdown — россыпь читабельных чипов */
+.dash-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.dash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.dash-chip-label { color: var(--text-muted); font-weight: 500; }
+.dash-chip-num {
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-feature-settings: "tnum";
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,0.10);
 }
 
 /* Stat row (Letterboxd-style inline stats kept) */
@@ -1777,74 +1813,59 @@ textarea.form-control:focus {
 .table tbody tr { transition: background 140ms var(--ease); }
 .table tbody tr:hover > * { background: rgba(255, 255, 255, 0.03); }
 
-/* ===== Status badges — Apple liquid-glass (iOS 18 material), tinted per state.
-   Тот же язык, что у .tag-badge: opacity-стек белого, deep backdrop-blur,
-   double inset highlight (top brighter, bottom soft). Цвет статуса задают
-   только text color + цветной hue в bottom-layer фона + цветной border. */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: var(--r-pill);
-  font-weight: 700;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.10);
-}
+/* ===== Status / role badges — единая система для всех страниц.
+   Linear-style: компактный pill с цветной точкой-индикатором, мягкая заливка
+   и тонкий цветной border. Размеры: .badge (по умолчанию ~22px), .badge-sm
+   для плотных таблиц, .badge-lg для hero-полок. Цвет задаётся currentColor
+   через .badge-{state}: точка наследует, фон/border — низкоопасная hsl-тень. */
+.badge,
 .moderation-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: var(--r-pill);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.10);
+  gap: 6px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text-secondary);
 }
-.badge-draft, .moderation-badge.badge-draft {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
-  color: #e2e2e2; border: 1px solid rgba(255,255,255,0.14);
+.badge::before,
+.moderation-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.95;
+  flex-shrink: 0;
 }
-.badge-moderation, .moderation-badge.badge-moderation {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(245,158,11,0.18) 100%);
-  color: #facc15; border: 1px solid rgba(245,158,11,0.40);
-}
-.badge-published, .moderation-badge.badge-published {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(34,197,94,0.18) 100%);
-  color: #6ee7a8; border: 1px solid rgba(34,197,94,0.40);
-}
-.badge-rejected, .moderation-badge.badge-rejected {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(239,68,68,0.18) 100%);
-  color: #fca5a5; border: 1px solid rgba(239,68,68,0.40);
-}
-.badge-hidden {
-  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(143,150,155,0.14) 100%);
-  color: var(--text-muted); border: 1px solid rgba(255,255,255,0.12);
-}
-.badge-deleted {
-  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(91,96,102,0.14) 100%);
-  color: var(--text-faint); border: 1px solid rgba(255,255,255,0.10);
-}
-.badge-admin {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, var(--accent-soft) 100%);
-  color: var(--accent); border: 1px solid var(--accent-strong);
-}
-.badge-user {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(0,209,255,0.16) 100%);
-  color: var(--cyan); border: 1px solid rgba(0,209,255,0.38);
-}
-.badge-guest {
-  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
-  color: var(--text-muted); border: 1px solid rgba(255,255,255,0.10);
-}
+
+/* Size variants */
+.badge-sm { height: 18px; padding: 0 7px; font-size: 10.5px; gap: 5px; }
+.badge-sm::before { width: 5px; height: 5px; }
+.badge-lg { height: 28px; padding: 0 12px; font-size: 13px; gap: 7px; }
+.badge-lg::before { width: 7px; height: 7px; }
+
+/* Review status — Linear-style colors with restraint */
+.badge-draft,      .moderation-badge.badge-draft      { color: #c5c8ce; background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.10); }
+.badge-moderation, .moderation-badge.badge-moderation { color: #fbbf24; background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.28); }
+.badge-published,  .moderation-badge.badge-published  { color: #4ade80; background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.28); }
+.badge-rejected,   .moderation-badge.badge-rejected   { color: #fca5a5; background: rgba(252,165,165,0.08); border-color: rgba(252,165,165,0.30); }
+.badge-hidden      { color: #9aa0a6; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+.badge-deleted     { color: #6b7075; background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.06); }
+
+/* User roles — те же правила, акцентные цвета бренда */
+.badge-admin       { color: #c4b5fd; background: rgba(123,92,255,0.10); border-color: rgba(123,92,255,0.32); }
+.badge-user        { color: #7dd3fc; background: rgba(0,209,255,0.08);  border-color: rgba(0,209,255,0.28); }
+.badge-guest       { color: #9ca3af; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
 
 /* ===== Playlist card / cover ===== */
 .playlist-card {
@@ -1878,6 +1899,43 @@ textarea.form-control:focus {
   overflow: hidden;
 }
 .playlist-cover::after { content: ""; }
+
+/* Mosaic 2×2 из реальных постеров фильмов подборки */
+.playlist-cover-mosaic {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  background: #0a0b10;
+  padding: 0;
+}
+.playlist-cover-mosaic > div {
+  background-size: cover;
+  background-position: center;
+  background-color: #1a1c24;
+  width: 100%; height: 100%;
+}
+
+/* Visibility radio в форме создания подборки */
+.visibility-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 140ms var(--ease), background 140ms var(--ease);
+}
+.visibility-option:hover { border-color: rgba(255,255,255,0.18); }
+.visibility-option:has(input:checked) {
+  border-color: rgba(123,92,255,0.55);
+  background: rgba(123,92,255,0.06);
+}
+.visibility-option input { margin-top: 3px; flex-shrink: 0; }
+.visibility-option span { font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+.visibility-option strong { color: var(--text); font-weight: 600; }
 
 /* Typographic fallback — каждая подборка получает свой hue по id, не выглядит как чёрный квадрат. */
 .playlist-cover-fallback {
@@ -2076,7 +2134,6 @@ textarea.form-control:focus {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
-  background: var(--bg);
   min-height: calc(100vh - 70px);
 }
 @media (min-width: 992px) {
@@ -2084,10 +2141,8 @@ textarea.form-control:focus {
 }
 
 .admin-sidebar {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 30%),
-    #0e1014;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: transparent;
+  border-right: 1px solid var(--border);
   padding: var(--s-5) 12px;
   position: sticky;
   top: 70px;
@@ -2155,26 +2210,120 @@ textarea.form-control:focus {
   margin: 0;
 }
 
-/* Admin table — sticky thead, row hover */
-.admin-content .table { font-size: 13px; }
-.admin-content .table > :not(caption) > * > * { padding: 12px 14px; }
-.admin-content .table thead th {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-strong);
-  background: rgba(255, 255, 255, 0.02);
-  position: sticky;
-  top: 70px;
-  z-index: 5;
+/* Admin table — чистый layout: одинаковые ячейки, hairline-разделитель
+   thead/tbody, всё центрировано по вертикали. */
+.admin-content .table {
+  font-size: 14px;
+  color: var(--text);
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 0;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text);
+  --bs-table-border-color: var(--border);
 }
-.admin-content .table tbody tr { border-bottom: 1px solid var(--border); }
-.admin-content .table tbody tr:hover > * { background: rgba(123, 92, 255, 0.05); }
-.admin-content .table .badge,
-.admin-content .table .moderation-badge { font-size: 9px; padding: 3px 8px; }
+/* Все ячейки (thead + tbody) — одинаковые отступы и вертикальное центрирование */
+.admin-content .table > :not(caption) > * > * {
+  padding: 14px 16px;
+  background: transparent;
+  vertical-align: middle;
+  border: 0;
+}
+.admin-content .table thead th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+}
+.admin-content .table tbody tr td { border-bottom: 1px solid var(--border); }
+.admin-content .table tbody tr:last-child td { border-bottom: 0; }
+.admin-content .table tbody tr { transition: background 120ms var(--ease); }
+.admin-content .table tbody tr:hover > td { background: rgba(255,255,255,0.025); }
 .admin-content .table .btn-sm,
-.admin-content .table .btn-xs { padding: 4px 10px; font-size: 11px; height: auto; }
+.admin-content .table .btn-xs { padding: 6px 12px; font-size: 12px; height: auto; }
+
+/* ===== Admin: new-content modal — poster preview + IMDB search ===== */
+.nc-poster-row { display: flex; gap: 14px; align-items: flex-start; }
+.nc-poster-preview {
+  width: 80px; aspect-ratio: 2/3;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(140deg, #2a2c34 0%, #11131a 100%);
+  border: 1px solid var(--border);
+  position: relative;
+  flex-shrink: 0;
+}
+.nc-poster-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nc-poster-empty {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--text-faint);
+}
+.nc-poster-controls { flex: 1; min-width: 0; }
+
+.nc-imdb-results {
+  margin-top: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nc-imdb-result {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+  text-align: left;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 120ms var(--ease), border-color 120ms var(--ease);
+}
+.nc-imdb-result:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+  color: var(--text);
+}
+.nc-imdb-result-poster {
+  width: 44px; aspect-ratio: 2/3;
+  border-radius: 4px;
+  overflow: hidden;
+  background: linear-gradient(140deg, #2a2c34 0%, #11131a 100%);
+  flex-shrink: 0;
+}
+.nc-imdb-result-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nc-imdb-result-body { flex: 1; min-width: 0; }
+.nc-imdb-result-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.2;
+}
+.nc-imdb-result-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.nc-imdb-result-stars { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+
+/* Sortable columns in admin table */
+.admin-content .table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 120ms var(--ease);
+}
+.admin-content .table th.sortable:hover { color: var(--text); }
+.admin-content .table th.sortable .sort-ind {
+  display: inline-block;
+  margin-left: 4px;
+  opacity: 0.35;
+  font-size: 10px;
+  transition: opacity 120ms var(--ease), color 120ms var(--ease);
+}
+.admin-content .table th.sortable.is-sorted .sort-ind { opacity: 1; color: var(--text); }
 
 /* ===== Comment cards (inside content-detail) ===== */
 section .card.mb-3 {
@@ -3123,7 +3272,7 @@ button.profile-stat-tile:focus-visible {
   text-decoration: none;
   color: inherit;
 }
-.list-row:hover { background: rgba(255, 255, 255, 0.02); color: inherit; }
+.list-row:hover { color: inherit; }
 .list-row:last-child { border-bottom: none; }
 .list-row-poster {
   width: 80px;
@@ -3135,12 +3284,9 @@ button.profile-stat-tile:focus-visible {
   overflow: hidden;
   display: block;
   text-decoration: none;
-  transition: transform 180ms var(--ease), box-shadow 180ms var(--ease);
 }
-a.list-row-poster:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px -10px rgba(0,0,0,0.6);
-}
+a.list-row-poster img { transition: opacity 160ms var(--ease); }
+a.list-row-poster:hover img { opacity: 0.86; }
 .list-row-poster img {
   width: 100%;
   height: 100%;
@@ -3311,55 +3457,552 @@ a.list-row-poster:hover {
   color: #86efac;
 }
 
-/* ===== Long-form prose (review-detail) ===== */
-.review-article { max-width: 720px; margin: 0 auto; }
-.review-article h1 {
-  font-family: var(--font-display);
-  font-size: clamp(32px, 4.6vw, 52px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  margin-bottom: var(--s-4);
+/* ===== Review detail (/reviews/{id}) — переверстано в языке главной.
+   Открытый layout, hairline-секции, без тёмных карточек. Hero с постером
+   контента + meta, далее заголовок-рецензия, byline, prose-тело, footer с
+   toggle-лайком. */
+.rv {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 32px);
 }
-.review-article-header {
-  border-bottom: 1px solid var(--border);
-  padding-bottom: var(--s-5);
-  margin-bottom: var(--s-6);
-}
-.review-article-meta {
+.rv-shell { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 32px); }
+
+.rv-content {
   display: flex;
-  align-items: center;
-  gap: var(--s-4);
-  margin-top: var(--s-4);
-  color: var(--text-muted);
-  font-size: 14px;
+  gap: clamp(14px, 2vw, 22px);
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: color 160ms var(--ease);
 }
-.review-article-author {
+.rv-content:hover .rv-content-title { color: var(--accent-hover, #f5c361); }
+.rv-content-poster {
+  width: 64px;
+  aspect-ratio: 2/3;
+  border-radius: 4px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(140deg, #2a2c34 0%, #11131a 100%);
+}
+.rv-content-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rv-content-poster.is-empty::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(140deg, #2a2c34 0%, #11131a 100%);
+}
+.rv-content-meta { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.rv-kicker {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.rv-content-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  line-height: 1.2;
+  transition: color 160ms var(--ease);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rv-content-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.rv-head { display: flex; flex-direction: column; gap: 18px; }
+.rv-head-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 24px; }
+.rv-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--text);
+}
+.rv-byline {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+.rv-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   text-decoration: none;
   color: inherit;
+  transition: color 160ms var(--ease);
 }
-.review-article-author:hover .author-name { color: var(--accent); }
-.author-name { color: var(--text); font-weight: 600; font-size: 14px; }
-.author-handle { color: var(--text-muted); font-size: 12px; }
+.rv-author:hover { color: var(--text); }
+.rv-author .user-avatar { width: 28px; height: 28px; font-size: 12px; }
+.rv-author-name { color: var(--text); font-weight: 600; }
+.rv-byline-sep { opacity: 0.4; }
+.rv-byline-item { font-feature-settings: "tnum"; }
 
-.prose {
+/* Score pill — крупный variant (.badge-lg parity) */
+.rating-pill.rating-pill-lg {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 13px;
+  gap: 6px;
+}
+.rating-pill .rating-of { color: var(--text-muted); font-weight: 500; font-size: 0.85em; }
+
+.rv-body {
   color: #d8d8d8;
-  font-size: 18px;
+  font-size: 18.5px;
   line-height: 1.75;
   font-family: var(--font-sans);
   font-weight: 300;
+  max-width: 680px;
 }
-.prose p { margin-bottom: 1.4em; }
-.prose h2, .prose h3 { margin-top: var(--s-7); margin-bottom: var(--s-3); }
-.prose blockquote {
-  border-left: 3px solid var(--accent);
-  padding-left: var(--s-5);
+.rv-body p { margin: 0 0 1.4em; }
+.rv-body p:last-child { margin-bottom: 0; }
+.rv-body h2, .rv-body h3 { margin-top: 1.6em; margin-bottom: 0.6em; color: var(--text); }
+.rv-body blockquote {
+  border-left: 3px solid rgba(255,255,255,0.18);
+  padding: 4px 0 4px 22px;
+  margin: 1.6em 0;
   color: var(--text-secondary);
   font-size: 19px;
-  margin: var(--s-6) 0;
+}
+
+.rv-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+/* Like button — liquid-glass pill, filled gold + heart glyph при is-liked */
+.rv-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
+  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1px 0 rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: color 160ms var(--ease), background 220ms var(--ease), border-color 220ms var(--ease), transform 120ms var(--ease);
+}
+.rv-like:hover {
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 100%);
+  border-color: rgba(255,255,255,0.22);
+}
+.rv-like:active { transform: scale(0.97); }
+.rv-like-icon { display: block; transition: fill 200ms var(--ease), stroke 200ms var(--ease), color 200ms var(--ease); }
+.rv-like-count {
+  font-feature-settings: "tnum";
+  color: var(--text-muted);
+  font-weight: 700;
+  padding-left: 10px;
+  margin-left: 4px;
+  border-left: 1px solid rgba(255,255,255,0.10);
+}
+.rv-like.is-liked {
+  color: #ffb4c0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(239,68,68,0.18) 100%);
+  border-color: rgba(239,68,68,0.40);
+}
+.rv-like.is-liked .rv-like-icon { fill: #ef4444; stroke: #ef4444; }
+.rv-like.is-liked .rv-like-count { color: #ffb4c0; border-left-color: rgba(255,255,255,0.18); }
+
+.rv-foot-actions { display: inline-flex; gap: 8px; }
+.rv-action {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 140ms var(--ease), border-color 140ms var(--ease), background 140ms var(--ease);
+}
+.rv-action:hover { color: var(--text); border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.03); }
+.rv-action-danger:hover { color: #fca5a5; border-color: rgba(239,68,68,0.40); background: rgba(239,68,68,0.06); }
+
+/* Note причины модерации над текстом рецензии — виден автору и админам */
+.rv-moderation-note {
+  margin: 0 0 24px;
+  padding: 14px 18px;
+  background: rgba(239,68,68,0.06);
+  border-left: 3px solid rgba(239,68,68,0.50);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.rv-moderation-note strong { color: #fff; font-weight: 700; margin-right: 6px; }
+/* Primary CTA — следует языку .g-btn-primary (белая пилюля, тёмный текст),
+   тот же стиль, что у «Найти своё кино» на главной. */
+.rv-action-primary {
+  height: 40px;
+  padding: 0 22px;
+  background: #fff;
+  color: #0d0d0d;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  border: 1px solid transparent;
+  transition: background 160ms var(--ease), transform 100ms var(--ease);
+}
+.rv-action-primary:hover {
+  background: #f0f0f0;
+  color: #0d0d0d;
+  border-color: transparent;
+}
+.rv-action-primary:active { transform: scale(0.98); }
+
+/* ===== Review edit (/reviews/{id}/edit) — двух-колоночный editor.
+   Левый rail с постером + метой контента (как Suno Edit Song Details),
+   правая колонка — slider оценки + Medium-style display title + plain body.
+   Sticky top toolbar c индикатором сохранения и primary CTA справа. */
+.rev {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 32px) clamp(40px, 6vw, 80px);
+}
+
+/* --- Top toolbar (без sticky-плашки, никакого затемнения) --- */
+.rev-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+  background: transparent;
+  border: 0;
+  margin-bottom: clamp(20px, 3vw, 36px);
+}
+.rev-toolbar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  justify-self: start;
+  transition: color 140ms var(--ease);
+}
+.rev-toolbar-back:hover { color: var(--text); }
+.rev-toolbar-back svg { display: block; }
+
+.rev-toolbar-status {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 16px;
+  opacity: 0;
+  transition: opacity 200ms var(--ease);
+}
+.rev-toolbar-status:not(:empty) { opacity: 1; }
+.rev-toolbar-status.is-saving::before {
+  content: "";
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  animation: rev-spin 700ms linear infinite;
+}
+.rev-toolbar-status.is-saved {
+  color: #6ee7a8;
+}
+.rev-toolbar-status.is-saved::before {
+  content: "";
+  width: 12px; height: 12px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/contain no-repeat;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/contain no-repeat;
+}
+@keyframes rev-spin { to { transform: rotate(360deg); } }
+
+.rev-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: end;
+}
+
+/* Toolbar overflow menu */
+.rev-toolbar-menu { position: relative; }
+.rev-toolbar-menu-trigger {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 140ms var(--ease), border-color 140ms var(--ease), background 140ms var(--ease);
+}
+.rev-toolbar-menu-trigger:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.03);
+}
+.rev-toolbar-menu-pop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 200px;
+  background: rgba(20,22,26,0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 16px 48px -16px rgba(0,0,0,0.7);
+  z-index: 30;
+}
+.rev-toolbar-menu-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 120ms var(--ease), color 120ms var(--ease);
+}
+.rev-toolbar-menu-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.rev-toolbar-menu-danger { color: #fca5a5; }
+.rev-toolbar-menu-danger:hover { background: rgba(239,68,68,0.10); color: #fca5a5; }
+
+/* --- Two-column layout --- */
+.rev-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+@media (max-width: 880px) {
+  .rev-layout { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* --- Left rail --- */
+.rev-rail {
+  position: sticky;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+@media (max-width: 880px) {
+  .rev-rail { position: static; }
+}
+.rev-rail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+.rev-rail-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: 8px;
+  background: linear-gradient(140deg, #2a2c34 0%, #11131a 100%);
+  overflow: hidden;
+  position: relative;
+  transition: transform 220ms var(--ease);
+}
+.rev-rail-card:hover .rev-rail-poster { transform: translateY(-2px); }
+.rev-rail-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rev-rail-poster.is-empty::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(140deg, #2a2c34 0%, #11131a 100%);
+}
+.rev-rail-meta { display: flex; flex-direction: column; gap: 4px; }
+.rev-rail-kicker { font-size: 11px; color: var(--text-faint); }
+.rev-rail-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+  transition: color 160ms var(--ease);
+}
+.rev-rail-card:hover .rev-rail-title { color: var(--accent-hover, #f5c361); }
+.rev-rail-sub { font-size: 13px; color: var(--text-muted); }
+
+.rev-rail-status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.rev-rail-status-label { font-size: 11px; color: var(--text-faint); }
+.rev-rail-status-value { display: inline-flex; }
+
+/* --- Right column / editor --- */
+.rev-editor { min-width: 0; }
+.rev-form { display: flex; flex-direction: column; gap: 36px; }
+
+/* Field block (общий для rating / title / body) */
+.rev-field { display: flex; flex-direction: column; gap: 10px; }
+.rev-field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.rev-field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+.rev-field-counter,
+.rev-field-clear {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+}
+.rev-field-clear {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+  transition: color 140ms var(--ease);
+}
+.rev-field-clear:hover { color: var(--text); }
+
+/* Stars row 1–10 */
+.rev-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.rev-stars {
+  display: inline-flex;
+  gap: 4px;
+  outline: none;
+}
+.rev-stars:focus-visible {
+  outline: 2px solid rgba(123,92,255,0.55);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+.rev-star {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(255,255,255,0.14);
+  transition: color 120ms var(--ease), transform 100ms var(--ease);
+}
+.rev-star svg { width: 24px; height: 24px; display: block; }
+.rev-star:hover { color: rgba(245,195,97,0.50); }
+.rev-star.is-on { color: var(--accent-hover, #f5c361); }
+.rev-star:active { transform: scale(0.90); }
+
+.rev-stars-readout {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-feature-settings: "tnum";
+  min-width: 160px;
+}
+.rev-stars-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+}
+.rev-stars-adj {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Inputs — стандартные с рамкой, focus подсвечивает accent */
+.rev-input {
+  width: 100%;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  transition: border-color 140ms var(--ease), background 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+.rev-input:hover { border-color: rgba(255,255,255,0.16); }
+.rev-input:focus {
+  outline: none;
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(123,92,255,0.55);
+  box-shadow: 0 0 0 3px rgba(123,92,255,0.16);
+}
+.rev-input::placeholder { color: var(--text-faint); }
+
+.rev-textarea {
+  resize: vertical;
+  min-height: 320px;
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+
+input.rev-input#r-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.015em;
 }
 
 /* ===== Review writer (review-create) — Gladia editor focus ===== */
@@ -3474,23 +4117,6 @@ a.list-row-poster:hover {
   background:
     linear-gradient(180deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-}
-
-/* My-rating row */
-.my-rating-row {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  padding: var(--s-3) 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  margin: var(--s-4) 0;
-}
-.my-rating-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
 }
 
 /* ===== Toast notifications ===== */
@@ -5469,31 +6095,88 @@ main { padding: 0; }
     0 6px 20px rgba(123, 92, 255, 0.28);
 }
 
-/* My-rating row inside hero — pill chip */
-.detail-hero-info .my-rating-row {
+/* My-rating chip — кликабельная плашка «Моя оценка ✦ 9 ✎» в hero детали контента.
+   В языке системы: тот же ритм, что у .badge/.rating-pill (28px height).
+   Hover слегка подсвечивает фон/border, без glow. */
+.my-rating-chip {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 6px 6px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-pill);
-  font-size: 13px;
+  height: 28px;
+  padding: 0 10px 0 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 12px;
   color: var(--text-secondary);
+  cursor: pointer;
   margin: 4px 0 0;
+  transition: color 140ms var(--ease), background 140ms var(--ease), border-color 140ms var(--ease);
 }
-.detail-hero-info .my-rating-row .my-rating-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+.my-rating-chip:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.18);
+}
+.my-rating-chip:focus-visible {
+  outline: 2px solid rgba(123,92,255,0.55);
+  outline-offset: 2px;
+}
+.my-rating-chip-label {
   color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0;
 }
-.detail-hero-info .my-rating-row .score-pill {
-  background: var(--accent-soft);
-  border-color: var(--accent-strong);
-  padding: 4px 10px;
+.my-rating-chip-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-feature-settings: "tnum";
+  font-weight: 700;
   font-size: 13px;
+  color: #fff;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,0.10);
 }
+.my-rating-chip-value svg { color: var(--accent-hover, #f5c361); display: block; }
+.my-rating-chip-edit { color: var(--text-faint); opacity: 0.7; flex-shrink: 0; transition: opacity 140ms var(--ease); }
+.my-rating-chip:hover .my-rating-chip-edit { opacity: 1; }
+
+/* Score chip — некликабельный вариант .my-rating-chip для hero рецензии.
+   Та же геометрия (28px, label · hairline · sparkle + число), без cursor/hover/edit-icon. */
+.score-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 28px;
+  padding: 0 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.score-chip-label {
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.score-chip-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-feature-settings: "tnum";
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,0.10);
+}
+.score-chip-value svg { color: var(--accent-hover, #f5c361); display: block; }
+.score-chip-num { line-height: 1; }
 
 
 /* ----- Reviews list & comments ----- */

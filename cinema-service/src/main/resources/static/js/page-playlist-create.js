@@ -20,11 +20,12 @@
       err.setAttribute('hidden', '');
       const title = document.getElementById('p-title').value.trim();
       if (!title) { err.textContent = 'Введите название'; err.removeAttribute('hidden'); return; }
+      const visibility = document.querySelector('input[name="p-visibility"]:checked');
       const payload = {
         title,
         description: document.getElementById('p-desc').value.trim() || null,
         coverImageUrl: document.getElementById('p-cover').value.trim() || null,
-        isPublic: document.getElementById('p-public').checked
+        isPublic: visibility ? visibility.value === 'public' : true
       };
 
       try {

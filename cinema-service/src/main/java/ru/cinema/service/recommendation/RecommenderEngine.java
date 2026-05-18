@@ -204,10 +204,10 @@ public class RecommenderEngine {
     public ScoredCandidate scoreForUser(Long userId, Content c, Map<Long, Double> userTagAffinity) {
         TrainedState s = state.get();
 
-        // CF: SVD prediction нормализуем 1..10 → [0..1]
+        // CF: SVD prediction нормализуем 1..5 → [0..1]
         double cf = 0;
         Double cfRaw = (userId != null && s.model.knowsUser(userId)) ? s.model.predict(userId, c.getId()) : null;
-        if (cfRaw != null) cf = clamp01((cfRaw - 1.0) / 9.0);
+        if (cfRaw != null) cf = clamp01((cfRaw - 1.0) / 4.0);
 
         // CB: cosine между TF-IDF юзера и TF-IDF контента
         double cb = userTagAffinity.isEmpty() ? 0 : s.tagIndex.cosineForUser(userTagAffinity, c);
@@ -296,10 +296,11 @@ public class RecommenderEngine {
         List<Rating> userRatings = ratingRepo.findByUserId(userId);
         LocalDateTime now = LocalDateTime.now();
         for (Rating r : userRatings) {
-            if (r.getValue() == null || r.getValue() < 7) continue;
+            // на шкале 1–5 «нравится» начинается с 4
+            if (r.getValue() == null || r.getValue() < 4) continue;
             Content c = s.byId.get(r.getContent().getId());
             if (c == null || c.getTags() == null) continue;
-            double w = (r.getValue() / 10.0) * timeDecay(r.getCreatedAt(), now);
+            double w = (r.getValue() / 5.0) * timeDecay(r.getCreatedAt(), now);
             for (Tag t : c.getTags()) {
                 double idf = s.tagIndex.idf(t.getId());
                 affinity.merge(t.getId(), w * idf, Double::sum);

@@ -60,6 +60,40 @@ public class TagService {
         return TagResponse.of(tagRepo.save(t));
     }
 
+    @Transactional
+    public void delete(Long id) {
+        if (!tagRepo.existsById(id)) throw new NotFoundException("Тег не найден: " + id);
+        tagRepo.deleteById(id);
+    }
+
+    @Transactional
+    public void attachToContent(Long contentId, Long tagId) {
+        var content = contentRepo.findById(contentId)
+                .orElseThrow(() -> new NotFoundException("Контент не найден: " + contentId));
+        var tag = tagRepo.findById(tagId)
+                .orElseThrow(() -> new NotFoundException("Тег не найден: " + tagId));
+        if (content.getTags() == null) content.setTags(new java.util.HashSet<>());
+        if (content.getTags().add(tag)) {
+            tag.setUsageCount((tag.getUsageCount() == null ? 0 : tag.getUsageCount()) + 1);
+            tagRepo.save(tag);
+        }
+        contentRepo.save(content);
+    }
+
+    @Transactional
+    public void detachFromContent(Long contentId, Long tagId) {
+        var content = contentRepo.findById(contentId)
+                .orElseThrow(() -> new NotFoundException("Контент не найден: " + contentId));
+        var tag = tagRepo.findById(tagId)
+                .orElseThrow(() -> new NotFoundException("Тег не найден: " + tagId));
+        if (content.getTags() != null && content.getTags().remove(tag)) {
+            int n = (tag.getUsageCount() == null ? 0 : tag.getUsageCount()) - 1;
+            tag.setUsageCount(Math.max(0, n));
+            tagRepo.save(tag);
+        }
+        contentRepo.save(content);
+    }
+
     static String slugify(String input) {
         if (input == null) return null;
         String normalized = Normalizer.normalize(input.toLowerCase(Locale.ROOT), Normalizer.Form.NFD)

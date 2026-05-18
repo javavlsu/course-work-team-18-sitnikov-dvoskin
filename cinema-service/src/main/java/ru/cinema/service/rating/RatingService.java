@@ -33,6 +33,11 @@ public class RatingService {
         return ratingRepo.findByUserIdAndContentId(userId, contentId).map(RatingResponse::of);
     }
 
+    /** Все оценки пользователя — для /api/v1/users/me/ratings (API map Этап 8). */
+    public java.util.List<RatingResponse> listByUser(Long userId) {
+        return ratingRepo.findByUserId(userId).stream().map(RatingResponse::of).toList();
+    }
+
     @Transactional
     public RatingResponse rate(Long userId, Long contentId, Integer value) {
         Content content = contentRepo.findById(contentId)

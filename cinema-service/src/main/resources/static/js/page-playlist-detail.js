@@ -67,7 +67,7 @@
       }
 
       document.getElementById('hero-eyebrow').textContent =
-        `Подборка · ${p.itemsCount || 0} ${UI.pluralize(p.itemsCount || 0, ['фильм', 'фильма', 'фильмов'])} · ${p.isPublic ? 'публичная' : 'приватная'}`;
+        `Подборка · ${p.itemsCount || 0} ${UI.pluralize(p.itemsCount || 0, ['фильм', 'фильма', 'фильмов'])} · ${p.isPublic ? 'Публичная' : 'Приватная'}`;
       document.getElementById('hero-title').textContent = p.title;
       document.getElementById('hero-desc').textContent = p.description || '';
 

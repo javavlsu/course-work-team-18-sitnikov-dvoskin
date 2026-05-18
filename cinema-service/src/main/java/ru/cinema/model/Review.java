@@ -42,6 +42,10 @@ public class Review {
     @Column(name = "status", nullable = false)
     private ReviewStatus status;
 
+    /** Причина отклонения/скрытия — заполняется модератором (use-case D Этапа 2, альт. поток 1). */
+    @Column(name = "moderation_reason", length = 500)
+    private String moderationReason;
+
     @Column(name = "view_count", nullable = false)
     private Integer viewCount = 0;
 
@@ -100,6 +104,9 @@ public class Review {
 
     public ReviewStatus getStatus() { return status; }
     public void setStatus(ReviewStatus status) { this.status = status; }
+
+    public String getModerationReason() { return moderationReason; }
+    public void setModerationReason(String moderationReason) { this.moderationReason = moderationReason; }
 
     public Integer getViewCount() { return viewCount; }
     public void setViewCount(Integer viewCount) { this.viewCount = viewCount; }

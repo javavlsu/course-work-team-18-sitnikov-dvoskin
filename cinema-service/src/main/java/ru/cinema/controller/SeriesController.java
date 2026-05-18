@@ -14,15 +14,18 @@ import ru.cinema.dto.content.CreateContentRequest;
 import ru.cinema.model.enums.ContentStatus;
 import ru.cinema.model.enums.ContentType;
 import ru.cinema.service.content.ContentService;
+import ru.cinema.service.content.SeriesService;
 
 @RestController
 @RequestMapping("/api/v1/series")
 @Tag(name = "Series")
 public class SeriesController {
 
+    private final SeriesService seriesService;
     private final ContentService contentService;
 
-    public SeriesController(ContentService contentService) {
+    public SeriesController(SeriesService seriesService, ContentService contentService) {
+        this.seriesService = seriesService;
         this.contentService = contentService;
     }
 
@@ -33,13 +36,12 @@ public class SeriesController {
             @RequestParam(required = false) String q,
             @RequestParam(required = false, defaultValue = "new") String sort,
             @PageableDefault(size = 20) Pageable pageable) {
-        return PageResponse.of(contentService.list(ContentType.SERIES, ContentStatus.PUBLISHED,
-                null, year, country, q, sort, pageable));
+        return PageResponse.of(seriesService.list(ContentStatus.PUBLISHED, null, year, country, q, sort, pageable));
     }
 
     @GetMapping("/{id}")
     public ContentDetailResponse byId(@PathVariable Long id) {
-        return contentService.toDetail(contentService.getById(id));
+        return contentService.toDetail(seriesService.getById(id));
     }
 
     @PostMapping
@@ -54,6 +56,6 @@ public class SeriesController {
                 req.duration(), req.budget(), req.boxOffice(),
                 req.totalSeasons(), req.totalEpisodes(), req.isFinished()
         );
-        return contentService.toDetail(contentService.create(forced));
+        return contentService.toDetail(seriesService.create(forced));
     }
 }

@@ -116,8 +116,16 @@ public class UserService {
         return reviewRepo.findByUserId(u.getId(), pageable);
     }
 
+    public Page<Review> getUserReviewsById(Long userId, Pageable pageable) {
+        return reviewRepo.findByUserId(userId, pageable);
+    }
+
     public List<Playlist> getUserPlaylists(String username) {
         User u = getByUsername(username);
         return playlistRepo.findByUserIdOrderByCreatedAtDesc(u.getId());
+    }
+
+    public List<Playlist> getUserPlaylistsById(Long userId) {
+        return playlistRepo.findByUserIdOrderByCreatedAtDesc(userId);
     }
 }

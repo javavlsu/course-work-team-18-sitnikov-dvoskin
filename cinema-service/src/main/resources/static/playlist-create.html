@@ -45,12 +45,25 @@
         <div class="mb-3">
           <label class="form-label" for="p-cover">URL обложки (опционально)</label>
           <input type="url" class="form-control" id="p-cover" maxlength="500" placeholder="https://…">
-          <div class="form-help">Иначе будет использован mosaic из постеров.</div>
+          <div class="form-help">Если не указать — обложкой станут постеры первых четырёх фильмов подборки.</div>
         </div>
 
-        <div class="form-check form-switch mb-4">
-          <input class="form-check-input" type="checkbox" id="p-public" checked>
-          <label class="form-check-label" for="p-public">Публичная подборка (видна всем)</label>
+        <div class="mb-4">
+          <label class="form-label">Видимость</label>
+          <div class="d-flex flex-column gap-2">
+            <label class="visibility-option">
+              <input class="form-check-input" type="radio" name="p-visibility" value="public" checked>
+              <span>
+                <strong>Публичная</strong> — видна всем посетителям сайта, появляется в публичных списках
+              </span>
+            </label>
+            <label class="visibility-option">
+              <input class="form-check-input" type="radio" name="p-visibility" value="private">
+              <span>
+                <strong>Приватная</strong> — видна только мне, не появляется ни в каких списках
+              </span>
+            </label>
+          </div>
         </div>
 
         <div class="d-flex justify-content-end gap-2">

@@ -30,13 +30,13 @@
 
   function bindStars() {
     const root = document.getElementById('stars');
-    if (root && !root.children.length) root.innerHTML = UI.starRatingTemplate({ max: 10 });
+    if (root && !root.children.length) root.innerHTML = UI.starRatingTemplate({ max: 5 });
     const stars = document.querySelectorAll('#stars button');
     const val = document.getElementById('stars-val');
     stars.forEach(b => {
       b.addEventListener('click', () => {
         RATING = +b.dataset.v;
-        val.textContent = `${RATING} / 10`;
+        val.textContent = `${RATING} / 5`;
         stars.forEach(x => x.classList.toggle('is-active', +x.dataset.v <= RATING));
       });
       b.addEventListener('mouseenter', () => {

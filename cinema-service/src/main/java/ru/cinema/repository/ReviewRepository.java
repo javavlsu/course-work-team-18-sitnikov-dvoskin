@@ -52,6 +52,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      */
     Page<Review> findByUserId(Long userId, Pageable pageable);
 
+    /** Рецензии пользователя с фильтрацией по статусу (вкладки на /me/reviews). */
+    Page<Review> findByUserIdAndStatus(Long userId, ReviewStatus status, Pageable pageable);
+
     /**
      * Возвращает рецензии с указанным статусом (для модерации).
      *

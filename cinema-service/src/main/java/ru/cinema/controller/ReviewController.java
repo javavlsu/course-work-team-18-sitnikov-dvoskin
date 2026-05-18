@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cinema.dto.common.PageResponse;
 import ru.cinema.dto.review.CreateReviewRequest;
+import ru.cinema.dto.review.LikeResponse;
 import ru.cinema.dto.review.ReviewDetailResponse;
 import ru.cinema.dto.review.ReviewListItem;
 import ru.cinema.dto.review.UpdateReviewRequest;
@@ -39,7 +40,8 @@ public class ReviewController {
 
     @GetMapping("/{id}")
     public ReviewDetailResponse byId(@PathVariable Long id) {
-        return ReviewDetailResponse.of(reviewService.getById(id));
+        Long me = CurrentUser.currentUserId();
+        return ReviewDetailResponse.of(reviewService.getById(id), reviewService.hasLiked(id, me));
     }
 
     @PostMapping
@@ -66,9 +68,8 @@ public class ReviewController {
     }
 
     @PostMapping("/{id}/like")
-    public ReviewDetailResponse like(@PathVariable Long id) {
-        // требуем authenticated через SecurityConfig
-        return ReviewDetailResponse.of(reviewService.like(id));
+    public LikeResponse toggleLike(@PathVariable Long id) {
+        return reviewService.toggleLike(id, CurrentUser.requireUserId());
     }
 
     @PostMapping("/{id}/view")

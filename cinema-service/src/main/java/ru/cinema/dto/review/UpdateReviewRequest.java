@@ -7,5 +7,5 @@ import jakarta.validation.constraints.Size;
 public record UpdateReviewRequest(
         @Size(max = 200) String title,
         String text,
-        @Min(1) @Max(10) Integer ratingValue
+        @Min(1) @Max(5) Integer ratingValue
 ) {}

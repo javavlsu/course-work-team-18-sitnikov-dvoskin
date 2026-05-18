@@ -97,6 +97,15 @@ public class Content {
     )
     private Set<Tag> tags = new HashSet<>();
 
+    /** Жанры — отдельная сущность Этапа 3 (class diagram), M:N через content_genres. */
+    @ManyToMany
+    @JoinTable(
+            name = "content_genres",
+            joinColumns = @JoinColumn(name = "content_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres = new HashSet<>();
+
     public Content() {
     }
 
@@ -188,4 +197,7 @@ public class Content {
 
     public Set<Tag> getTags() { return tags; }
     public void setTags(Set<Tag> tags) { this.tags = tags; }
+
+    public Set<Genre> getGenres() { return genres; }
+    public void setGenres(Set<Genre> genres) { this.genres = genres; }
 }

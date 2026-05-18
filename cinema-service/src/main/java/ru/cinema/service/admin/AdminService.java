@@ -121,6 +121,20 @@ public class AdminService {
     @Transactional
     public User updateUser(Long id, AdminUpdateUserRequest req) {
         User u = userRepo.findById(id).orElseThrow(() -> NotFoundException.of("User", id));
+
+        // Защита от self-demotion / self-ban: админ не может снять с себя роль
+        // или заблокировать сам себя — иначе теряет доступ к админке.
+        Long me = ru.cinema.security.CurrentUser.currentUserId();
+        if (me != null && me.equals(id)) {
+            if (req.role() != null && u.getRole() == ru.cinema.model.enums.UserRole.ADMIN
+                    && req.role() != ru.cinema.model.enums.UserRole.ADMIN) {
+                throw new ru.cinema.exception.ConflictException("Нельзя снять роль администратора с самого себя");
+            }
+            if (Boolean.FALSE.equals(req.isActive())) {
+                throw new ru.cinema.exception.ConflictException("Нельзя заблокировать самого себя");
+            }
+        }
+
         if (req.role() != null) u.setRole(req.role());
         if (req.isActive() != null) u.setIsActive(req.isActive());
         return userRepo.save(u);
@@ -128,16 +142,34 @@ public class AdminService {
 
     @Transactional
     public void deleteUser(Long id) {
+        Long me = ru.cinema.security.CurrentUser.currentUserId();
+        if (me != null && me.equals(id)) {
+            throw new ru.cinema.exception.ConflictException("Нельзя удалить самого себя");
+        }
         if (!userRepo.existsById(id)) throw NotFoundException.of("User", id);
         userRepo.deleteById(id);
     }
 
     public Page<Content> listContent(ContentStatus status, ContentType type, Pageable pageable) {
-        if (status != null && type != null) {
-            return contentRepo.findByContentTypeAndStatus(type, status, pageable);
-        }
-        if (status != null) return contentRepo.findByStatus(status, pageable);
-        return contentRepo.findAll(pageable);
+        return listContent(status, type, null, pageable);
+    }
+
+    /** Расширенный листинг с текстовым поиском по title (для админ-таблицы). */
+    public Page<Content> listContent(ContentStatus status, ContentType type, String q, Pageable pageable) {
+        org.springframework.data.jpa.domain.Specification<ru.cinema.model.Content> spec = (root, cq, cb) -> {
+            var ps = new java.util.ArrayList<jakarta.persistence.criteria.Predicate>();
+            if (status != null) ps.add(cb.equal(root.get("status"), status));
+            if (type != null)   ps.add(cb.equal(root.get("contentType"), type));
+            if (q != null && !q.isBlank()) {
+                String needle = "%" + q.trim().toLowerCase() + "%";
+                ps.add(cb.or(
+                        cb.like(cb.lower(root.get("title")), needle),
+                        cb.like(cb.lower(root.get("originalTitle")), needle)
+                ));
+            }
+            return ps.isEmpty() ? cb.conjunction() : cb.and(ps.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        };
+        return contentRepo.findAll(spec, pageable);
     }
 
     public Page<Review> listReviews(ReviewStatus status, Pageable pageable) {

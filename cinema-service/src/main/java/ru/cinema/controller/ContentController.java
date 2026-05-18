@@ -46,6 +46,15 @@ public class ContentController {
         return contentService.toDetail(contentService.getById(id));
     }
 
+    /** GET /api/v1/content/top — заявлен в API map Этап 8 (топ по рейтингу). */
+    @GetMapping("/top")
+    public PageResponse<ContentListItem> top(
+            @RequestParam(required = false) ContentType type,
+            @PageableDefault(size = 20) Pageable pageable) {
+        // sort=rating уже умеет ContentService.list через параметр sort
+        return PageResponse.of(contentService.list(type, null, null, null, null, null, "rating", pageable));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")

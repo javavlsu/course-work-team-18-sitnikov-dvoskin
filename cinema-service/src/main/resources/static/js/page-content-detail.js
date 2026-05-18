@@ -346,11 +346,10 @@
   // ===== Rating modal ========================================
 
   function bindRatingModal() {
-    // Брендовые искры (1..10) генерим через общий шаблон — единый стиль с
-    // .rating-badge на постерах и .score-pill в карточках рецензий.
+    // Брендовые искры (1..5) — шкала из ТЗ Этапа 3 (1–5).
     const starsRoot = $('stars');
     if (starsRoot && !starsRoot.children.length) {
-      starsRoot.innerHTML = UI.starRatingTemplate({ max: 10 });
+      starsRoot.innerHTML = UI.starRatingTemplate({ max: 5 });
     }
 
     const stars = document.querySelectorAll('#stars button');
@@ -360,7 +359,7 @@
     stars.forEach(b => {
       b.addEventListener('click', () => {
         current = +b.dataset.v;
-        valEl.textContent = current + ' / 10';
+        valEl.textContent = current + ' / 5';
         stars.forEach(x => x.classList.toggle('is-active', +x.dataset.v <= current));
       });
       b.addEventListener('mouseenter', () => {
@@ -381,6 +380,10 @@
       }
     });
     $('my-rating-edit').addEventListener('click', () => {
+      // Если уже стоит оценка — показываем "Убрать оценку", иначе скрываем
+      const has = $('my-rating-edit').hasAttribute('hidden') === false &&
+                  $('my-rating-num').textContent !== '—';
+      $('remove-rating').toggleAttribute('hidden', !has);
       const m = new bootstrap.Modal($('rateModal'));
       m.show();
     });
@@ -389,12 +392,27 @@
       if (!current) return;
       try {
         await API.put(`/content/${contentId}/rating`, { value: current });
-        $('my-rating-row').removeAttribute('hidden');
+        $('my-rating-edit').removeAttribute('hidden');
         $('my-rating-num').textContent = current;
         $('cta-rate').classList.add('is-active');
         bootstrap.Modal.getInstance($('rateModal')).hide();
       } catch (e) {
         alert(e.message || 'Не удалось сохранить оценку');
+      }
+    });
+
+    $('remove-rating').addEventListener('click', async () => {
+      try {
+        await API.delete(`/content/${contentId}/rating`);
+        $('my-rating-edit').setAttribute('hidden', '');
+        $('my-rating-num').textContent = '—';
+        $('cta-rate').classList.remove('is-active');
+        current = 0;
+        stars.forEach(x => x.classList.remove('is-active'));
+        $('rate-val').textContent = '—';
+        bootstrap.Modal.getInstance($('rateModal')).hide();
+      } catch (e) {
+        console.error('[content] remove rating', e);
       }
     });
   }
@@ -541,7 +559,7 @@
 
   function applyMyRating(r) {
     if (r && r.value) {
-      $('my-rating-row').removeAttribute('hidden');
+      $('my-rating-edit').removeAttribute('hidden');
       $('my-rating-num').textContent = r.value;
       $('cta-rate').classList.add('is-active');
     }

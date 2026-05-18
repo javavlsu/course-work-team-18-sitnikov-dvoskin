@@ -57,7 +57,7 @@ public class SecurityConfig {
                         // === Статика и инструменты ===
                         .requestMatchers(
                                 "/", "/index.html", "/favicon.ico",
-                                "/css/**", "/js/**", "/images/**", "/img/**", "/partials/**",
+                                "/css/**", "/js/**", "/images/**", "/img/**", "/partials/**", "/uploads/**",
                                 "/*.html",
                                 "/movies", "/movies/**", "/series", "/series/**",
                                 "/content/**", "/login", "/register", "/profile",
@@ -83,6 +83,10 @@ public class SecurityConfig {
                                 "/api/v1/movies/**",
                                 "/api/v1/series/**",
                                 "/api/v1/tags/**",
+                                "/api/v1/genres",
+                                "/api/v1/genres/**",
+                                "/api/v1/persons",
+                                "/api/v1/persons/**",
                                 "/api/v1/search",
                                 "/api/v1/reviews",
                                 "/api/v1/reviews/*",
@@ -91,7 +95,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/users/*",
                                 "/api/v1/users/*/reviews",
-                                "/api/v1/users/*/playlists"
+                                "/api/v1/users/*/playlists",
+                                "/api/v1/users/*/followers",
+                                "/api/v1/users/*/following"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/playlists",
@@ -112,6 +118,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()
 
                         .anyRequest().permitAll()
+                )
+                // Для анонимных запросов на защищённый эндпоинт — 401, не 403.
+                // Фронт ловит 401 и редиректит на /login (через api.js silent refresh).
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((req, res, e) -> {
+                            res.setStatus(401);
+                            res.setContentType("application/json;charset=UTF-8");
+                            res.getWriter().write(
+                                "{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"Требуется аутентификация\"}");
+                        })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -53,7 +53,7 @@
             <div class="detail-rating-cluster" id="rating-cluster" hidden>
               <span id="rating-sparkle" aria-hidden="true"></span>
               <span class="big" id="rating-big">—</span>
-              <span class="of">/10</span>
+              <span class="of">/5</span>
               <span class="votes" id="rating-votes"></span>
             </div>
 
@@ -78,12 +78,15 @@
               </button>
             </div>
 
-            <!-- My rating chip -->
-            <div class="my-rating-row" id="my-rating-row" hidden>
-              <span class="my-rating-label">Моя оценка</span>
-              <span class="score-pill"><span class="score-num" id="my-rating-num">—</span><span class="score-of">/10</span></span>
-              <button class="g-btn g-btn-ghost g-btn-sm" id="my-rating-edit">Изменить</button>
-            </div>
+            <!-- My rating chip (вся плашка — кнопка, по клику открывает модалку оценки) -->
+            <button type="button" class="my-rating-chip" id="my-rating-edit" hidden aria-label="Моя оценка — изменить">
+              <span class="my-rating-chip-label">Моя оценка</span>
+              <span class="my-rating-chip-value">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1L13.8 9.2L22 11L13.8 12.8L12 21L10.2 12.8L2 11L10.2 9.2Z"/></svg>
+                <span id="my-rating-num">—</span>
+              </span>
+              <svg class="my-rating-chip-edit" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -157,18 +160,21 @@
 
   </main>
 
-  <!-- Rate modal — interactive 1..10 stars -->
+  <!-- Rate modal — interactive 1..5 stars -->
   <div class="modal fade" id="rateModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-strong); border-radius:var(--r-xl)">
         <div class="modal-body p-4">
           <h4 class="mb-2 text-center">Поставь оценку</h4>
-          <p class="text-center text-muted small mb-4">От 1 до 10 — как в IMDb</p>
+          <p class="text-center text-muted small mb-4">Шкала от 1 до 5</p>
           <div class="star-rating justify-content-center d-flex" id="stars" data-star-rating></div>
           <div class="text-center mt-3 mono text-gold" id="rate-val" style="font-size:20px">—</div>
-          <div class="d-flex gap-2 justify-content-center mt-4">
-            <button class="g-btn g-btn-ghost" data-bs-dismiss="modal">Отмена</button>
-            <button class="g-btn g-btn-primary" id="save-rating">Сохранить</button>
+          <div class="d-flex gap-2 justify-content-between align-items-center mt-4">
+            <button class="g-btn g-btn-ghost g-btn-danger" id="remove-rating" type="button" hidden>Убрать оценку</button>
+            <div class="d-flex gap-2 ms-auto">
+              <button class="g-btn g-btn-ghost" data-bs-dismiss="modal" type="button">Отмена</button>
+              <button class="g-btn g-btn-primary" id="save-rating" type="button">Сохранить</button>
+            </div>
           </div>
         </div>
       </div>

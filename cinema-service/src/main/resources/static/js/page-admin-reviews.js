@@ -75,10 +75,19 @@
       const rid = div.dataset.rid;
       div.querySelectorAll('button[data-action]').forEach(btn => {
         btn.addEventListener('click', async () => {
+          const action = btn.dataset.action;
+          let reason = null;
+          // Для REJECTED/HIDDEN модератор обязан указать причину (use-case D, альт. поток 1).
+          if (action === 'REJECTED' || action === 'HIDDEN') {
+            reason = prompt(action === 'REJECTED' ? 'Причина отклонения:' : 'Причина скрытия:');
+            if (reason == null) return;          // отменили
+            reason = reason.trim();
+            if (!reason) return;                  // пустую причину не принимаем
+          }
           try {
-            await API.patch(`/admin/reviews/${rid}/status`, { status: btn.dataset.action });
+            await API.patch(`/admin/reviews/${rid}/status`, { status: action, reason: reason });
             load();
-          } catch (e) { alert(e.message || 'Не удалось'); }
+          } catch (e) { console.error('[admin-reviews]', e); }
         });
       });
     });

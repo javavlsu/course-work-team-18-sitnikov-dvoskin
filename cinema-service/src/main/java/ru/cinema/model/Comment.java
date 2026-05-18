@@ -1,6 +1,7 @@
 package ru.cinema.model;
 
 import jakarta.persistence.*;
+import ru.cinema.model.enums.CommentStatus;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +10,8 @@ import java.time.LocalDateTime;
  * <p>
  * Представляет комментарий пользователя к контенту.
  * Комментарий может быть отредактирован автором после публикации.
+ * Статус (PUBLISHED/HIDDEN/DELETED) управляется модератором —
+ * см. use-case «Модерация комментариев» из Этапа 2.
  * </p>
  */
 @Entity
@@ -33,6 +36,10 @@ public class Comment {
     @Column(name = "is_edited", nullable = false)
     private Boolean isEdited = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private CommentStatus status = CommentStatus.PUBLISHED;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -46,6 +53,7 @@ public class Comment {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         if (isEdited == null) isEdited = false;
+        if (status == null) status = CommentStatus.PUBLISHED;
     }
 
     // --- Getters & Setters ---
@@ -70,4 +78,7 @@ public class Comment {
 
     public LocalDateTime getEditedAt() { return editedAt; }
     public void setEditedAt(LocalDateTime editedAt) { this.editedAt = editedAt; }
+
+    public CommentStatus getStatus() { return status; }
+    public void setStatus(CommentStatus status) { this.status = status; }
 }

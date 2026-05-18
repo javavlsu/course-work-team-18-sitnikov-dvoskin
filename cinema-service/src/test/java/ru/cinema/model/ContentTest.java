@@ -30,16 +30,16 @@ class ContentTest {
     void calculateAverageRating_calculatesAverage_whenRatingsPresent() {
         Content content = new Content();
         List<Rating> ratings = List.of(
-                ratingOf(8),
-                ratingOf(10),
-                ratingOf(6)
+                ratingOf(4),
+                ratingOf(5),
+                ratingOf(3)
         );
         content.setRatings(ratings);
 
         content.calculateAverageRating();
 
-        // (8+10+6)/3 = 8.0
-        assertThat(content.getAverageRating()).isEqualByComparingTo(BigDecimal.valueOf(8.0));
+        // (4+5+3)/3 = 4.0 (шкала 1–5)
+        assertThat(content.getAverageRating()).isEqualByComparingTo(BigDecimal.valueOf(4.0));
     }
 
     @Test

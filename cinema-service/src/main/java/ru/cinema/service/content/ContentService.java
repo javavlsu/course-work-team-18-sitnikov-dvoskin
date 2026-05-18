@@ -41,17 +41,20 @@ public class ContentService {
     private final RatingRepository ratingRepo;
     private final ReviewRepository reviewRepo;
     private final CommentRepository commentRepo;
+    private final ru.cinema.repository.PersonRepository personRepo;
 
     public ContentService(ContentRepository contentRepo,
                           TagRepository tagRepo,
                           RatingRepository ratingRepo,
                           ReviewRepository reviewRepo,
-                          CommentRepository commentRepo) {
+                          CommentRepository commentRepo,
+                          ru.cinema.repository.PersonRepository personRepo) {
         this.contentRepo = contentRepo;
         this.tagRepo = tagRepo;
         this.ratingRepo = ratingRepo;
         this.reviewRepo = reviewRepo;
         this.commentRepo = commentRepo;
+        this.personRepo = personRepo;
     }
 
     public Content getById(Long id) {
@@ -106,6 +109,9 @@ public class ContentService {
             // Скрываем записи с битой обложкой — флаг ставится клиентом через
             // POST /api/v1/content/{id}/report-broken-poster.
             predicates.add(cb.isFalse(root.get("posterBroken")));
+            // Скрываем записи без постера — фронт всё равно не покажет «серый квадрат».
+            predicates.add(cb.isNotNull(root.get("posterUrl")));
+            predicates.add(cb.notEqual(cb.length(root.get("posterUrl").as(String.class)), 0));
             if (type != null) predicates.add(cb.equal(root.get("contentType"), type));
             if (year != null) predicates.add(cb.equal(root.get("releaseYear"), year));
             if (country != null && !country.isBlank()) predicates.add(cb.equal(root.get("country"), country));
@@ -123,6 +129,104 @@ public class ContentService {
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+
+        return contentRepo.findAll(spec, sorted).map(ContentListItem::of);
+    }
+
+    /**
+     * Расширенный поиск с фильтрами Этапа 2/3: жанр, диапазон лет, минимальный
+     * рейтинг, актёр/режиссёр. Используется в {@code /api/v1/search}.
+     */
+    public Page<ContentListItem> search(ContentType type, Long tagId, Long genreId,
+                                         String personName, String personRole,
+                                         Integer yearFrom, Integer yearTo,
+                                         Double minRating, String country, String q,
+                                         String sort, Pageable pageable) {
+        Pageable sorted = ContentSortMapper.apply(pageable, sort);
+        Specification<Content> spec = (root, cq, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("status"), ContentStatus.PUBLISHED));
+            predicates.add(cb.isFalse(root.get("posterBroken")));
+            predicates.add(cb.isNotNull(root.get("posterUrl")));
+            predicates.add(cb.notEqual(cb.length(root.get("posterUrl").as(String.class)), 0));
+            if (type != null) predicates.add(cb.equal(root.get("contentType"), type));
+            if (yearFrom != null) predicates.add(cb.greaterThanOrEqualTo(root.get("releaseYear"), yearFrom));
+            if (yearTo != null)   predicates.add(cb.lessThanOrEqualTo(root.get("releaseYear"),    yearTo));
+            if (country != null && !country.isBlank()) predicates.add(cb.equal(root.get("country"), country));
+            if (minRating != null) {
+                predicates.add(cb.greaterThanOrEqualTo(
+                        root.get("averageRating").as(Double.class), minRating));
+            }
+            if (q != null && !q.isBlank()) {
+                String like = "%" + q.toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("title")), like),
+                        cb.like(cb.lower(root.get("originalTitle")), like)
+                ));
+            }
+            if (tagId != null) {
+                var tags = root.join("tags", JoinType.INNER);
+                predicates.add(cb.equal(tags.get("id"), tagId));
+                cq.distinct(true);
+            }
+            if (genreId != null) {
+                // many-to-many через content_genres
+                jakarta.persistence.criteria.Subquery<Long> sub = cq.subquery(Long.class);
+                jakarta.persistence.criteria.Root<Content> sc = sub.from(Content.class);
+                var g = sc.join("genres", JoinType.INNER);
+                sub.select(sc.get("id")).where(cb.equal(g.get("id"), genreId));
+                predicates.add(cb.in(root.get("id")).value(sub));
+            }
+            if (personName != null && !personName.isBlank()) {
+                // фильтруем content_id из персон с подходящим именем (+ ролью если задана)
+                jakarta.persistence.criteria.Subquery<Long> sub = cq.subquery(Long.class);
+                jakarta.persistence.criteria.Root<ru.cinema.model.Person> p = sub.from(ru.cinema.model.Person.class);
+                // join через native не работает на JPA-уровне без entity для pivot;
+                // делаем через ID-список из PersonRepository в сервисном слое отдельно.
+                // Здесь fallback: фильтр по lower(name) и затем contentIds в отдельный запрос.
+                // Для простоты курсача используем native fallback ниже.
+                return null; // обработаем personName отдельно ниже
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // Если задан personName — сужаем по ID через PersonRepository.findContentIdsByPersonName
+        if (personName != null && !personName.isBlank()) {
+            List<Long> ids = personRepo.findContentIdsByPersonName(personName.trim(),
+                    personRole == null || personRole.isBlank() ? null : personRole.toUpperCase());
+            if (ids.isEmpty()) {
+                return Page.empty(sorted);
+            }
+            Specification<Content> withPerson = (root, cq, cb) -> {
+                List<Predicate> ps = new ArrayList<>();
+                ps.add(cb.equal(root.get("status"), ContentStatus.PUBLISHED));
+                ps.add(cb.isFalse(root.get("posterBroken")));
+                ps.add(cb.isNotNull(root.get("posterUrl")));
+                ps.add(cb.notEqual(cb.length(root.get("posterUrl").as(String.class)), 0));
+                ps.add(root.get("id").in(ids));
+                if (type != null) ps.add(cb.equal(root.get("contentType"), type));
+                if (yearFrom != null) ps.add(cb.greaterThanOrEqualTo(root.get("releaseYear"), yearFrom));
+                if (yearTo != null)   ps.add(cb.lessThanOrEqualTo(root.get("releaseYear"),    yearTo));
+                if (minRating != null) ps.add(cb.greaterThanOrEqualTo(root.get("averageRating").as(Double.class), minRating));
+                if (q != null && !q.isBlank()) {
+                    String like = "%" + q.toLowerCase() + "%";
+                    ps.add(cb.or(cb.like(cb.lower(root.get("title")), like),
+                                 cb.like(cb.lower(root.get("originalTitle")), like)));
+                }
+                if (genreId != null) {
+                    var g = root.join("genres", JoinType.INNER);
+                    ps.add(cb.equal(g.get("id"), genreId));
+                    cq.distinct(true);
+                }
+                if (tagId != null) {
+                    var tags = root.join("tags", JoinType.INNER);
+                    ps.add(cb.equal(tags.get("id"), tagId));
+                    cq.distinct(true);
+                }
+                return cb.and(ps.toArray(new Predicate[0]));
+            };
+            return contentRepo.findAll(withPerson, sorted).map(ContentListItem::of);
+        }
 
         return contentRepo.findAll(spec, sorted).map(ContentListItem::of);
     }

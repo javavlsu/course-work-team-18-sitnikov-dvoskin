@@ -1,15 +1,11 @@
 /**
- * page-review-detail.js — отдельная страница рецензии.
- *
- * Refero patterns:
- *  - Medium article (narrow column, large headline, author block).
- *  - Letterboxd review (score pill + content header above title).
+ * page-review-detail.js — страница рецензии (новый макет в языке главной).
  *
  * API:
- *  - GET /api/v1/reviews/{id}
- *  - POST /api/v1/reviews/{id}/view (autoincrement, fire-and-forget)
- *  - POST /api/v1/reviews/{id}/like
- *  - DELETE /api/v1/reviews/{id} (только автор/админ)
+ *  - GET /api/v1/reviews/{id} → ReviewDetailResponse{...hasLiked, likeCount}
+ *  - POST /api/v1/reviews/{id}/view (анонимно)
+ *  - POST /api/v1/reviews/{id}/like → {liked, likeCount} (toggle, требует auth)
+ *  - DELETE /api/v1/reviews/{id}
  */
 (function () {
   'use strict';
@@ -20,22 +16,19 @@
   }
 
   const id = getId();
+  let state = { hasLiked: false, likeCount: 0 };
 
   function paragraphize(text) {
     if (!text) return '';
     return text.split(/\n{2,}/).map(p => `<p>${UI.escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('');
   }
 
-  function statusBadge(s) {
-    const map = {
-      DRAFT: ['badge-draft', 'Черновик'],
-      MODERATION: ['badge-moderation', 'На модерации'],
-      PUBLISHED: ['badge-published', 'Опубликована'],
-      REJECTED: ['badge-rejected', 'Отклонена'],
-      HIDDEN: ['badge-hidden', 'Скрыта']
-    };
-    const [cls, label] = map[s] || ['', ''];
-    return cls ? `${label}` : '';
+  function applyLikeState() {
+    const btn = document.getElementById('like-btn');
+    const count = document.getElementById('like-count');
+    btn.classList.toggle('is-liked', !!state.hasLiked);
+    btn.setAttribute('aria-pressed', state.hasLiked ? 'true' : 'false');
+    count.textContent = UI.formatCount(state.likeCount || 0);
   }
 
   async function load() {
@@ -47,52 +40,75 @@
       const r = await API.reviewById(id);
       document.title = `${r.title} · MovieHub`;
 
-      // header content link
-      const cId = r.content && r.content.id;
-      const cType = r.content && r.content.contentType;
-      const url = cId ? (cType === 'SERIES' ? `/series/${cId}` : `/movies/${cId}`) : '#';
-      document.getElementById('content-link').setAttribute('href', url);
-      document.getElementById('content-title').textContent = r.content ? r.content.title : 'Контент';
-      document.getElementById('content-meta').textContent = r.content ? (r.content.contentType === 'SERIES' ? 'Сериал' : 'Фильм') : '';
-      // poster
-      if (r.content) {
-        document.getElementById('poster-mount').innerHTML = UI.posterImg({
-          title: r.content.title,
-          posterUrl: r.content.posterUrl
-        }, { sizeClass: 'poster-row', showRating: false, showType: false });
+      const c = r.content || null;
+      const cHref = c ? UI.urlForContent(c) : '#';
+      document.getElementById('content-link').setAttribute('href', cHref);
+      document.getElementById('content-title').textContent = c ? c.title : 'Контент';
+      const subParts = [];
+      if (c && c.releaseYear) subParts.push(c.releaseYear);
+      if (c) subParts.push(c.contentType === 'SERIES' ? 'Сериал' : 'Фильм');
+      document.getElementById('content-meta').textContent = subParts.join(' · ');
+
+      const posterMount = document.getElementById('poster-mount');
+      if (c && c.posterUrl) {
+        posterMount.innerHTML = `<img src="${UI.escapeHtml(c.posterUrl)}" alt="${UI.escapeHtml(c.title || '')}" loading="lazy" onerror="this.parentNode.classList.add('is-empty');this.remove();">`;
+      } else {
+        posterMount.innerHTML = '';
+        posterMount.classList.add('is-empty');
       }
 
-      // score + status
-      document.getElementById('score-num').textContent = r.ratingValue != null ? r.ratingValue : '—';
+      const pill = document.getElementById('score-pill');
+      if (r.ratingValue != null) {
+        document.getElementById('score-chip-num').textContent = r.ratingValue;
+        pill.removeAttribute('hidden');
+      }
       const sb = document.getElementById('status-badge');
-      sb.innerHTML = statusBadge(r.status);
-      sb.className = 'badge badge-' + (r.status || '').toLowerCase();
-      if (r.status === 'PUBLISHED') sb.style.display = 'none';
+      if (r.status && r.status !== 'PUBLISHED') {
+        const html = UI.reviewStatusBadge(r.status);
+        const m = html.match(/class="badge ([^"]+)">([^<]+)</);
+        if (m) {
+          sb.className = 'badge badge-lg ' + m[1];
+          sb.textContent = m[2];
+          sb.removeAttribute('hidden');
+        }
+      }
 
       document.getElementById('r-title').textContent = r.title || 'Без названия';
+      // Причина модерации (use-case D, альт. поток 1) — показываем автору и админу
+      const showReason = r.moderationReason
+          && Auth.user && r.author
+          && (Auth.user.id === r.author.id || Auth.user.role === 'ADMIN');
+      if (showReason) {
+        const body = document.getElementById('r-body');
+        const note = document.createElement('div');
+        note.className = 'rv-moderation-note';
+        note.innerHTML = `<strong>Причина модерации:</strong> ${UI.escapeHtml(r.moderationReason)}`;
+        body.parentNode.insertBefore(note, body);
+      }
       document.getElementById('r-body').innerHTML = paragraphize(r.text || '');
       document.getElementById('r-date').textContent = UI.formatDate(r.createdAt);
-      document.getElementById('r-views').textContent = `${r.viewCount || 0} просмотров`;
+      document.getElementById('r-views').textContent =
+        `${UI.formatCount(r.viewCount || 0)} ${UI.pluralize(r.viewCount || 0, ['просмотр','просмотра','просмотров'])}`;
 
-      // author block
       if (r.author) {
         const aLink = document.getElementById('author-link');
         aLink.setAttribute('href', `/users/${encodeURIComponent(r.author.username)}`);
         document.getElementById('author-name').textContent = r.author.username;
-        document.getElementById('author-handle').textContent = '@' + r.author.username;
-        document.getElementById('author-avatar').textContent = (r.author.username || 'U').charAt(0).toUpperCase();
+        const av = document.getElementById('author-avatar');
+        av.textContent = (r.author.username || 'U').charAt(0).toUpperCase();
+        av.style.setProperty('--avatar-hue', UI.avatarHue(r.author.username || ''));
       }
 
-      document.getElementById('like-count').textContent = r.likeCount || 0;
+      state.hasLiked = !!r.hasLiked;
+      state.likeCount = r.likeCount || 0;
+      applyLikeState();
 
-      // author actions
       if (Auth.isAuthenticated() && r.author && (Auth.user.id === r.author.id || Auth.user.role === 'ADMIN')) {
         const actions = document.getElementById('author-actions');
         actions.removeAttribute('hidden');
         document.getElementById('edit-link').setAttribute('href', `/reviews/${id}/edit`);
       }
 
-      // increment view (public)
       try { API.post(`/reviews/${id}/view`, {}, { requireAuth: false }); } catch (e) {}
     } catch (e) {
       document.querySelector('main').innerHTML = `<div class="container my-5">${UI.errorState({
@@ -109,10 +125,20 @@
         location.href = `/login?next=${encodeURIComponent(location.pathname)}`;
         return;
       }
+      const prev = { ...state };
+      state.hasLiked = !state.hasLiked;
+      state.likeCount = Math.max(0, state.likeCount + (state.hasLiked ? 1 : -1));
+      applyLikeState();
       try {
-        const r = await API.post(`/reviews/${id}/like`);
-        document.getElementById('like-count').textContent = r.likeCount || 0;
-      } catch (e) { alert(e.message || 'Не удалось'); }
+        const res = await API.post(`/reviews/${id}/like`);
+        state.hasLiked = !!res.liked;
+        state.likeCount = res.likeCount != null ? res.likeCount : state.likeCount;
+        applyLikeState();
+      } catch (e) {
+        state = prev;
+        applyLikeState();
+        if (e.status !== 401) alert(e.message || 'Не удалось');
+      }
     });
     document.getElementById('delete-btn').addEventListener('click', async () => {
       if (!confirm('Удалить рецензию?')) return;

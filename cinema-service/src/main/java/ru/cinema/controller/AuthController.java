@@ -9,7 +9,10 @@ import ru.cinema.dto.auth.AuthResponse;
 import ru.cinema.dto.auth.LoginRequest;
 import ru.cinema.dto.auth.RefreshRequest;
 import ru.cinema.dto.auth.RegisterRequest;
+import ru.cinema.dto.user.UserResponse;
+import ru.cinema.security.CurrentUser;
 import ru.cinema.service.auth.AuthService;
+import ru.cinema.service.user.UserService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -17,9 +20,17 @@ import ru.cinema.service.auth.AuthService;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
+    }
+
+    /** GET /api/v1/auth/me — текущий юзер (по JWT). Алиас на UserController.me, заявлен в API map Этапа 8. */
+    @GetMapping("/me")
+    public UserResponse me() {
+        return userService.toResponse(CurrentUser.currentUser(), true);
     }
 
     @PostMapping("/register")

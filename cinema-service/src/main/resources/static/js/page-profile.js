@@ -15,18 +15,7 @@
 
 
   function playlistCard(p) {
-    return `
-      <div class="col-6 col-md-4 col-lg-3">
-        <a class="playlist-card" href="/playlists/${p.id}">
-          <div class="playlist-cover playlist-cover-mosaic" aria-hidden="true">
-            <div></div><div></div><div></div><div></div>
-          </div>
-          <div class="playlist-meta">
-            <div class="playlist-title">${UI.escapeHtml(p.title)}</div>
-            <div class="playlist-byline">${p.itemsCount || 0} ${UI.pluralize(p.itemsCount || 0, ['фильм','фильма','фильмов'])} · ${p.isPublic ? 'публичная' : 'приватная'}</div>
-          </div>
-        </a>
-      </div>`;
+    return `<div class="col-6 col-md-4 col-lg-3">${UI.playlistCard(p, { showVisibility: true })}</div>`;
   }
 
   function fillStats(stats) {

@@ -12,6 +12,7 @@ import ru.cinema.exception.NotFoundException;
 import ru.cinema.model.Comment;
 import ru.cinema.model.Content;
 import ru.cinema.model.User;
+import ru.cinema.model.enums.CommentStatus;
 import ru.cinema.model.enums.UserRole;
 import ru.cinema.repository.CommentRepository;
 import ru.cinema.repository.ContentRepository;
@@ -34,20 +35,44 @@ public class CommentService {
         this.userService = userService;
     }
 
+    /** Публичный список — только PUBLISHED (модерация Этапа 2). */
     public Page<CommentResponse> listForContent(Long contentId, Pageable pageable) {
+        return commentRepo.findByContentIdAndStatusOrderByCreatedAtAsc(contentId, CommentStatus.PUBLISHED, pageable)
+                .map(CommentResponse::of);
+    }
+
+    /** Все комментарии под контентом (для админа). */
+    public Page<CommentResponse> listAllForContent(Long contentId, Pageable pageable) {
         return commentRepo.findByContentIdOrderByCreatedAtAsc(contentId, pageable)
                 .map(CommentResponse::of);
+    }
+
+    /** Полный список в указанном статусе (админ-вкладки). */
+    public Page<CommentResponse> listByStatus(CommentStatus status, Pageable pageable) {
+        return commentRepo.findByStatus(status, pageable).map(CommentResponse::of);
+    }
+
+    /** Модерация: смена статуса PUBLISHED ↔ HIDDEN ↔ DELETED. */
+    @Transactional
+    public CommentResponse moderate(Long commentId, CommentStatus newStatus) {
+        Comment c = commentRepo.findById(commentId)
+                .orElseThrow(() -> NotFoundException.of("Comment", commentId));
+        c.setStatus(newStatus);
+        return CommentResponse.of(commentRepo.save(c));
     }
 
     @Transactional
     public CommentResponse create(Long contentId, Long userId, CreateCommentRequest req) {
         Content content = contentRepo.findById(contentId)
                 .orElseThrow(() -> NotFoundException.of("Content", contentId));
+        User author = userService.getById(userId);
         Comment c = new Comment();
-        c.setUser(userService.getById(userId));
+        c.setUser(author);
         c.setContent(content);
         c.setText(req.text());
         c.setIsEdited(false);
+        // ADMIN-автор сразу публикует, USER — на модерацию (use-case Этап 2)
+        c.setStatus(author.getRole() == UserRole.ADMIN ? CommentStatus.PUBLISHED : CommentStatus.MODERATION);
         return CommentResponse.of(commentRepo.save(c));
     }
 

@@ -69,11 +69,11 @@
       + `</svg>`;
   }
 
-  // 10 кнопок 1..10 для модалок «Поставь оценку» (.star-rating).
+  // 5 кнопок 1..5 для модалок «Поставь оценку» (.star-rating).
   // Брендовая искра вместо Unicode ★. Используется на content-detail,
   // review-create, review-edit — единая геометрия и поведение.
   function starRatingTemplate(opts = {}) {
-    const { max = 10 } = opts;
+    const { max = 5 } = opts;
     let html = '';
     for (let v = 1; v <= max; v++) {
       html += `<button type="button" data-v="${v}" aria-label="Оценка ${v} из ${max}">${iconSparkle({ size: 22 })}</button>`;
@@ -88,13 +88,13 @@
     return n.toFixed(1);
   }
 
-  // Tier по оценке (Kinopoisk-style цвет): 7+ зелёный, 5-6.9 амбер, <5 красный.
+  // Tier по оценке (шкала 1–5): 4+ зелёный, 3-3.99 амбер, <3 красный.
   function ratingTier(value) {
     if (value == null) return '';
     const n = typeof value === 'string' ? parseFloat(value) : value;
     if (isNaN(n) || n === 0) return '';
-    if (n >= 7) return 'rating-high';
-    if (n >= 5) return 'rating-mid';
+    if (n >= 4) return 'rating-high';
+    if (n >= 3) return 'rating-mid';
     return 'rating-low';
   }
 
@@ -217,6 +217,44 @@
     ADMIN:     'Администратор',
     MODERATOR: 'Модератор'
   };
+  // ===== Playlist card — mosaic из реальных постеров =====
+  // Если у подборки coverImageUrl задан — рисуем его как полную обложку.
+  // Иначе — mosaic 2×2 из первых до 4 постеров фильмов внутри подборки.
+  // Если фильмов нет — typographic fallback с hue от id+title.
+  function playlistCover(p) {
+    if (p.coverImageUrl) {
+      return `<div class="playlist-cover"><img class="playlist-cover-img" src="${escapeHtml(p.coverImageUrl)}" alt="${escapeHtml(p.title || '')}" loading="lazy"></div>`;
+    }
+    const posters = Array.isArray(p.previewPosters) ? p.previewPosters.filter(Boolean) : [];
+    if (posters.length === 0) {
+      const hue = avatarHue((p.id || 0) + '-' + (p.title || ''));
+      return `<div class="playlist-cover playlist-cover-fallback" style="--hue:${hue}deg" aria-hidden="true"></div>`;
+    }
+    // Берём до 4. Если меньше 4 — заполняем повторами для красоты mosaic.
+    const fill = [];
+    for (let i = 0; i < 4; i++) fill.push(posters[i % posters.length]);
+    return `<div class="playlist-cover playlist-cover-mosaic" aria-hidden="true">${
+      fill.map(u => `<div style="background-image:url('${escapeHtml(u)}')"></div>`).join('')
+    }</div>`;
+  }
+
+  function playlistCard(p, opts = {}) {
+    const { showOwner = false, showVisibility = false } = opts;
+    const count = p.itemsCount || 0;
+    const bylineParts = [];
+    bylineParts.push(`${count} ${pluralize(count, ['фильм','фильма','фильмов'])}`);
+    if (showVisibility && p.isPublic === false) bylineParts.push('Приватная');
+    if (showOwner && p.owner) bylineParts.push('@' + escapeHtml(p.owner.username));
+    return `
+      <a class="playlist-card" href="/playlists/${p.id}">
+        ${playlistCover(p)}
+        <div class="playlist-meta">
+          <div class="playlist-title">${escapeHtml(p.title || '')}</div>
+          <div class="playlist-byline">${bylineParts.join(' · ')}</div>
+        </div>
+      </a>`;
+  }
+
   function roleLabel(role) {
     if (!role) return ROLE_LABELS.USER;
     return ROLE_LABELS[role] || role;
@@ -655,6 +693,8 @@
     reviewStatusBadge,
     reviewRow,
     roleLabel,
+    playlistCard,
+    playlistCover,
     contentCard,
     contentCardCol,
     skeletonCard,

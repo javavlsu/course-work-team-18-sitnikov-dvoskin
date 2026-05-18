@@ -15,10 +15,6 @@
 
   <header data-include="navbar"></header>
 
-  <!--
-    Pattern: Linear admin dashboard / Vercel admin (sidebar + content + stat cards row + chart placeholders).
-    Pattern: Stripe dashboard (number prominent, label uppercase, breakdown small).
-  -->
   <div class="admin-layout">
     <div data-include="admin-sidebar"></div>
 
@@ -32,14 +28,23 @@
 
       <div class="auth-alert" id="dash-error" hidden></div>
 
-      <h2 class="h5 text-muted mb-3" style="letter-spacing:.08em;font-weight:700">Пользователи</h2>
-      <div class="row g-3 mb-5" id="users-stats"></div>
+      <section class="dash-section">
+        <h2 class="dash-section-title">Пользователи</h2>
+        <ul class="dash-stat-row" id="users-stats"></ul>
+        <div class="dash-breakdown" id="users-breakdown"></div>
+      </section>
 
-      <h2 class="h5 text-muted mb-3" style="letter-spacing:.08em;font-weight:700">Контент</h2>
-      <div class="row g-3 mb-5" id="content-stats"></div>
+      <section class="dash-section">
+        <h2 class="dash-section-title">Контент</h2>
+        <ul class="dash-stat-row" id="content-stats"></ul>
+        <div class="dash-breakdown" id="content-breakdown"></div>
+      </section>
 
-      <h2 class="h5 text-muted mb-3" style="letter-spacing:.08em;font-weight:700">Активность</h2>
-      <div class="row g-3 mb-5" id="activity-stats"></div>
+      <section class="dash-section">
+        <h2 class="dash-section-title">Активность</h2>
+        <ul class="dash-stat-row" id="activity-stats"></ul>
+        <div class="dash-breakdown" id="activity-breakdown"></div>
+      </section>
     </main>
   </div>
 

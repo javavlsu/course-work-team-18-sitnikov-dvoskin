@@ -33,6 +33,13 @@ public class RatingController {
         return ratingService.rate(CurrentUser.requireUserId(), contentId, req.value());
     }
 
+    /** Алиас на PUT — заявлен в API map Этап 8 как POST. */
+    @PostMapping
+    public RatingResponse ratePost(@PathVariable Long contentId,
+                                   @Valid @RequestBody RateRequest req) {
+        return ratingService.rate(CurrentUser.requireUserId(), contentId, req.value());
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> remove(@PathVariable Long contentId) {
         ratingService.delete(CurrentUser.requireUserId(), contentId);

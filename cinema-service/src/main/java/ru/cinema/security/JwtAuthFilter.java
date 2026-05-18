@@ -14,12 +14,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.cinema.model.User;
+import ru.cinema.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Фильтр, который вытаскивает JWT из Authorization header и кладёт юзера в SecurityContext.
+ * <p>
+ * Роль и активность подтягиваются из БД на каждый запрос (а не из JWT claim),
+ * чтобы admin-смена роли или ban пользователя действовали моментально —
+ * без ожидания истечения текущего access-токена.
  */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -30,9 +37,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final String PREFIX = "Bearer ";
 
     private final JwtService jwt;
+    private final UserRepository userRepo;
 
-    public JwtAuthFilter(JwtService jwt) {
+    public JwtAuthFilter(JwtService jwt, UserRepository userRepo) {
         this.jwt = jwt;
+        this.userRepo = userRepo;
     }
 
     @Override
@@ -46,17 +55,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 Claims claims = jwt.requireValid(token, JwtService.TYPE_ACCESS);
                 Long userId = Long.parseLong(claims.getSubject());
-                String role = String.valueOf(claims.get(JwtService.CLAIM_ROLE));
-                String username = String.valueOf(claims.get(JwtService.CLAIM_USERNAME));
 
-                AuthPrincipal principal = new AuthPrincipal(userId, username, role);
-                var auth = new UsernamePasswordAuthenticationToken(
-                        principal,
-                        null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                );
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                // Подтягиваем актуальное состояние из БД: ban / смена роли должны
+                // вступать в силу немедленно.
+                Optional<User> userOpt = userRepo.findById(userId);
+                if (userOpt.isEmpty() || Boolean.FALSE.equals(userOpt.get().getIsActive())) {
+                    SecurityContextHolder.clearContext();
+                } else {
+                    User u = userOpt.get();
+                    String role = u.getRole() == null ? "USER" : u.getRole().name();
+                    AuthPrincipal principal = new AuthPrincipal(u.getId(), u.getUsername(), role);
+                    var auth = new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             } catch (JwtException | IllegalArgumentException e) {
                 log.debug("Невалидный JWT: {}", e.getMessage());
                 SecurityContextHolder.clearContext();

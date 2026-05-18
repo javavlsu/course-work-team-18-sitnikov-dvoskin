@@ -3,7 +3,8 @@
  *
  * API:
  *  - GET /api/v1/admin/users?role=&active=&page=
- *  - PATCH /api/v1/admin/users/{id} { role?, isActive? }
+ *  - PATCH /api/v1/admin/users/{id}/role { role }
+ *  - PATCH /api/v1/admin/users/{id}/status { isActive }
  *  - DELETE /api/v1/admin/users/{id}
  */
 (function () {
@@ -13,23 +14,20 @@
   const state = { role: '', active: '', page: 0 };
 
   function row(u) {
-    const roleBadge = u.role === 'ADMIN' ? 'badge-admin' : 'badge-user';
+    const roleBadge  = u.role === 'ADMIN' ? 'badge-admin' : 'badge-user';
     const stateBadge = u.isActive ? 'badge-published' : 'badge-rejected';
+    const roleLabel  = UI.roleLabel(u.role);
+    const stateLabel = u.isActive ? 'Активен' : 'Заблокирован';
     return `
-      <tr data-uid="${u.id}">
+      <tr data-uid="${u.id}" data-role="${u.role}" data-active="${u.isActive ? '1' : '0'}">
         <td class="mono text-muted">${u.id}</td>
-        <td>
-          <div class="d-flex align-items-center gap-2">
-            <span class="user-avatar" style="width:28px;height:28px;font-size:12px">${(u.username || 'U').charAt(0).toUpperCase()}</span>
-            <a class="text-light" href="/users/${encodeURIComponent(u.username)}" target="_blank">@${UI.escapeHtml(u.username)}</a>
-          </div>
-        </td>
-        <td class="text-muted small">${UI.escapeHtml(u.email || '')}</td>
-        <td><span class="badge ${roleBadge}">${u.role}</span></td>
-        <td><span class="badge ${stateBadge}">${u.isActive ? 'active' : 'blocked'}</span></td>
-        <td class="text-muted small">${UI.formatDate(u.createdAt)}</td>
+        <td><a class="text-light" href="/users/${encodeURIComponent(u.username)}" target="_blank">@${UI.escapeHtml(u.username)}</a></td>
+        <td class="text-muted">${UI.escapeHtml(u.email || '')}</td>
+        <td><span class="badge ${roleBadge}">${roleLabel}</span></td>
+        <td><span class="badge ${stateBadge}">${stateLabel}</span></td>
+        <td class="text-muted">${UI.formatDate(u.createdAt)}</td>
         <td class="text-end">
-          <button class="btn btn-xs btn-outline-light" data-action="toggle-role">${u.role === 'ADMIN' ? 'Снять admin' : 'Сделать admin'}</button>
+          <button class="btn btn-xs btn-outline-light" data-action="toggle-role">${u.role === 'ADMIN' ? 'Снять админа' : 'Сделать админом'}</button>
           <button class="btn btn-xs btn-outline-light" data-action="toggle-active">${u.isActive ? 'Заблокировать' : 'Разблокировать'}</button>
           <button class="btn btn-xs btn-outline-danger" data-action="delete">Удалить</button>
         </td>
@@ -46,7 +44,8 @@
       if (state.active !== '') params.active = state.active;
       const page = await API.adminUsers(params);
       const items = (page && page.items) || [];
-      document.getElementById('users-count').textContent = `${page.totalElements} ${UI.pluralize(page.totalElements, ['пользователь', 'пользователя', 'пользователей'])}`;
+      document.getElementById('users-count').textContent =
+        `${page.totalElements} ${UI.pluralize(page.totalElements, ['пользователь','пользователя','пользователей'])}`;
       if (!items.length) {
         tbody.innerHTML = `<tr><td colspan="7">${UI.emptyState({ title: 'Никого не найдено' })}</td></tr>`;
       } else {
@@ -67,17 +66,16 @@
           const action = btn.dataset.action;
           try {
             if (action === 'toggle-role') {
-              const cur = tr.querySelector('.badge.badge-admin') ? 'ADMIN' : 'USER';
-              await API.patch(`/admin/users/${uid}`, { role: cur === 'ADMIN' ? 'USER' : 'ADMIN' });
+              const next = tr.dataset.role === 'ADMIN' ? 'USER' : 'ADMIN';
+              await API.patch(`/admin/users/${uid}/role`, { role: next });
             } else if (action === 'toggle-active') {
-              const isActive = !!tr.querySelector('.badge.badge-published');
-              await API.patch(`/admin/users/${uid}`, { isActive: !isActive });
+              const next = tr.dataset.active !== '1';
+              await API.patch(`/admin/users/${uid}/status`, { isActive: next });
             } else if (action === 'delete') {
-              if (!confirm('Удалить пользователя? Это действие нельзя отменить.')) return;
               await API.delete(`/admin/users/${uid}`);
             }
             load();
-          } catch (e) { alert(e.message || 'Не удалось'); }
+          } catch (e) { console.error('[admin-users]', e); }
         });
       });
     });

@@ -56,12 +56,12 @@ public class Rating {
     /**
      * Изменяет значение оценки.
      *
-     * @param newValue новое значение оценки (от 1 до 10)
-     * @throws IllegalArgumentException если значение вне диапазона 1-10
+     * @param newValue новое значение оценки (от 1 до 5)
+     * @throws IllegalArgumentException если значение вне диапазона 1-5
      */
     public void changeValue(Integer newValue) {
-        if (newValue < 1 || newValue > 10) {
-            throw new IllegalArgumentException("Оценка должна быть от 1 до 10, получено: " + newValue);
+        if (newValue < 1 || newValue > 5) {
+            throw new IllegalArgumentException("Оценка должна быть от 1 до 5, получено: " + newValue);
         }
         this.value = newValue;
     }

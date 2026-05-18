@@ -15,60 +15,62 @@
 
   <header data-include="navbar"></header>
 
-  <!--
-    Pattern: Medium article (refero search "medium article reading layout"):
-    narrow column 720px, big serif/sans display headline, author block, prose body.
-    Pattern: Letterboxd review (poster + score-pill + reading layout).
-  -->
-  <main class="container my-4 my-lg-5">
+  <main class="rv">
 
-    <article class="review-article" id="article">
+    <article class="rv-shell" id="article">
 
-      <!-- Hero block (poster mini + content link) -->
-      <a class="list-row mb-4" id="content-link" href="#">
-        <div id="poster-mount" style="width:64px;flex-shrink:0;">
-          <div class="poster poster-row"><div class="skeleton" style="width:100%;height:100%;"></div></div>
+      <a class="rv-content" id="content-link" href="#" aria-label="К фильму">
+        <div class="rv-content-poster" id="poster-mount">
+          <div class="skeleton" style="width:100%;height:100%;"></div>
         </div>
-        <div class="list-row-body">
-          <div class="text-muted small">Рецензия на</div>
-          <div class="list-row-title" id="content-title">Загрузка…</div>
-          <div class="text-muted small" id="content-meta"></div>
+        <div class="rv-content-meta">
+          <div class="rv-kicker">Рецензия на</div>
+          <div class="rv-content-title" id="content-title">Загрузка…</div>
+          <div class="rv-content-sub" id="content-meta"></div>
         </div>
       </a>
 
-      <header class="review-article-header">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <span class="score-pill score-pill-lg"><span class="score-num" id="score-num">—</span><span class="score-of">/10</span></span>
-          <span class="badge" id="status-badge"></span>
+      <header class="rv-head">
+        <div class="rv-head-row">
+          <span class="score-chip" id="score-pill" hidden>
+            <span class="score-chip-label">Оценка</span>
+            <span class="score-chip-value">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1L13.8 9.2L22 11L13.8 12.8L12 21L10.2 12.8L2 11L10.2 9.2Z"/></svg>
+              <span class="score-chip-num" id="score-chip-num">—</span>
+            </span>
+          </span>
+          <span class="badge badge-lg" id="status-badge" hidden></span>
         </div>
-        <h1 id="r-title">Загрузка…</h1>
+        <h1 class="rv-title" id="r-title">Загрузка…</h1>
 
-        <div class="review-article-meta">
-          <a class="review-article-author" id="author-link" href="#">
+        <div class="rv-byline">
+          <a class="rv-author" id="author-link" href="#">
             <span class="user-avatar" id="author-avatar">?</span>
-            <div>
-              <div class="author-name" id="author-name">…</div>
-              <div class="author-handle" id="author-handle">@…</div>
-            </div>
+            <span class="rv-author-name" id="author-name">…</span>
           </a>
-          <span class="text-muted small mono" id="r-date"></span>
-          <span class="text-muted small mono" id="r-views"></span>
+          <span class="rv-byline-sep" aria-hidden="true">·</span>
+          <span class="rv-byline-item" id="r-date"></span>
+          <span class="rv-byline-sep" aria-hidden="true">·</span>
+          <span class="rv-byline-item" id="r-views"></span>
         </div>
       </header>
 
-      <div class="prose" id="r-body"></div>
+      <div class="rv-body" id="r-body"></div>
 
-      <!-- Author actions (только если автор смотрит свою рецензию) -->
-      <div class="d-flex gap-2 mt-5" id="author-actions" hidden>
-        <a class="btn btn-outline-light btn-sm" id="edit-link" href="#">Редактировать</a>
-        <button class="btn btn-outline-danger btn-sm" id="delete-btn">Удалить</button>
-      </div>
+      <footer class="rv-foot">
+        <button type="button" class="rv-like" id="like-btn" aria-pressed="false">
+          <svg class="rv-like-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span class="rv-like-label" id="like-label">Нравится</span>
+          <span class="rv-like-count" id="like-count">0</span>
+        </button>
+        <div class="rv-foot-actions" id="author-actions" hidden>
+          <a class="rv-action" id="edit-link" href="#">Редактировать</a>
+          <button class="rv-action rv-action-danger" id="delete-btn" type="button">Удалить</button>
+        </div>
+      </footer>
 
-      <!-- Like / interaction -->
-      <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
-        <button class="btn btn-outline-gold" id="like-btn">♥ <span id="like-count">0</span></button>
-        <a class="btn btn-ghost" href="/me/reviews">К моим рецензиям</a>
-      </div>
     </article>
 
   </main>

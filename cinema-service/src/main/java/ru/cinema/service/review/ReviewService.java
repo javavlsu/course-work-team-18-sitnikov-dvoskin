@@ -14,7 +14,10 @@ import ru.cinema.model.Review;
 import ru.cinema.model.User;
 import ru.cinema.model.enums.ReviewStatus;
 import ru.cinema.model.enums.UserRole;
+import ru.cinema.dto.review.LikeResponse;
+import ru.cinema.model.ReviewLike;
 import ru.cinema.repository.ContentRepository;
+import ru.cinema.repository.ReviewLikeRepository;
 import ru.cinema.repository.ReviewRepository;
 
 @Service
@@ -23,13 +26,16 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepo;
     private final ContentRepository contentRepo;
+    private final ReviewLikeRepository likeRepo;
     private final ru.cinema.service.user.UserService userService;
 
     public ReviewService(ReviewRepository reviewRepo,
                          ContentRepository contentRepo,
+                         ReviewLikeRepository likeRepo,
                          ru.cinema.service.user.UserService userService) {
         this.reviewRepo = reviewRepo;
         this.contentRepo = contentRepo;
+        this.likeRepo = likeRepo;
         this.userService = userService;
     }
 
@@ -44,7 +50,9 @@ public class ReviewService {
                     status == null ? ReviewStatus.PUBLISHED : status, pageable);
         }
         if (userId != null) {
-            return reviewRepo.findByUserId(userId, pageable);
+            return status == null
+                    ? reviewRepo.findByUserId(userId, pageable)
+                    : reviewRepo.findByUserIdAndStatus(userId, status, pageable);
         }
         return reviewRepo.findByStatus(status == null ? ReviewStatus.PUBLISHED : status, pageable);
     }
@@ -96,11 +104,34 @@ public class ReviewService {
         return reviewRepo.save(r);
     }
 
+    /**
+     * Toggle лайка. Один пользователь — один лайк на рецензию (гарант. uq_review_likes).
+     * Пересчитывает denormalized like_count из COUNT(*) review_likes для рецензии.
+     */
     @Transactional
-    public Review like(Long id) {
-        Review r = getById(id);
-        r.setLikeCount((r.getLikeCount() == null ? 0 : r.getLikeCount()) + 1);
-        return reviewRepo.save(r);
+    public LikeResponse toggleLike(Long reviewId, Long userId) {
+        Review r = getById(reviewId);
+        User u = userService.getById(userId);
+        boolean liked;
+        if (likeRepo.existsByReview_IdAndUser_Id(reviewId, userId)) {
+            likeRepo.deleteByReviewIdAndUserId(reviewId, userId);
+            liked = false;
+        } else {
+            ReviewLike rl = new ReviewLike();
+            rl.setReview(r);
+            rl.setUser(u);
+            likeRepo.save(rl);
+            liked = true;
+        }
+        long count = likeRepo.countByReview_Id(reviewId);
+        r.setLikeCount((int) count);
+        reviewRepo.save(r);
+        return new LikeResponse(liked, count);
+    }
+
+    public boolean hasLiked(Long reviewId, Long userId) {
+        if (userId == null) return false;
+        return likeRepo.existsByReview_IdAndUser_Id(reviewId, userId);
     }
 
     @Transactional
@@ -112,8 +143,19 @@ public class ReviewService {
 
     @Transactional
     public Review updateStatus(Long id, ReviewStatus status) {
+        return updateStatus(id, status, null);
+    }
+
+    @Transactional
+    public Review updateStatus(Long id, ReviewStatus status, String reason) {
         Review r = getById(id);
         r.setStatus(status);
+        // Причина сохраняется только при REJECTED/HIDDEN — для других статусов сбрасываем.
+        if (status == ReviewStatus.REJECTED || status == ReviewStatus.HIDDEN) {
+            r.setModerationReason(reason);
+        } else {
+            r.setModerationReason(null);
+        }
         return reviewRepo.save(r);
     }
 

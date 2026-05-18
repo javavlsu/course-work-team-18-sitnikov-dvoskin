@@ -27,5 +27,10 @@ spring:
       mode: always
       schema-locations: classpath:db/schema.sql
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
 server:
   port: 8080

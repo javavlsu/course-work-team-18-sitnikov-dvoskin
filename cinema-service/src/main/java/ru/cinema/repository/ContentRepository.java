@@ -143,7 +143,8 @@ public interface ContentRepository extends JpaRepository<Content, Long>, JpaSpec
      * @param pageable параметры пагинации; не должен быть {@code null}
      * @return страница контента с указанным тегом
      */
-    @Query("SELECT c FROM Content c JOIN c.tags t WHERE t.id = :tagId AND c.status = :status")
+    @Query("SELECT c FROM Content c JOIN c.tags t WHERE t.id = :tagId AND c.status = :status " +
+           "AND c.posterBroken = false AND c.posterUrl IS NOT NULL AND length(c.posterUrl) > 0")
     Page<Content> findByTagId(@Param("tagId") Long tagId,
                               @Param("status") ContentStatus status,
                               Pageable pageable);
@@ -175,6 +176,8 @@ public interface ContentRepository extends JpaRepository<Content, Long>, JpaSpec
                     SELECT c.id FROM content c
                     WHERE c.status = 'PUBLISHED'
                       AND c.poster_broken = FALSE
+                      AND c.poster_url IS NOT NULL
+                      AND c.poster_url <> ''
                       AND to_tsvector('russian',
                               coalesce(c.title,'') || ' ' ||
                               coalesce(c.original_title,'') || ' ' ||
@@ -192,6 +195,8 @@ public interface ContentRepository extends JpaRepository<Content, Long>, JpaSpec
                     SELECT count(*) FROM content c
                     WHERE c.status = 'PUBLISHED'
                       AND c.poster_broken = FALSE
+                      AND c.poster_url IS NOT NULL
+                      AND c.poster_url <> ''
                       AND to_tsvector('russian',
                               coalesce(c.title,'') || ' ' ||
                               coalesce(c.original_title,'') || ' ' ||

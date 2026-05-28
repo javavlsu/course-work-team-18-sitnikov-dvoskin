@@ -47,6 +47,7 @@
         <td class="text-muted">${UI.formatDate(c.createdAt)}</td>
         <td class="text-end">
           <button class="btn btn-xs btn-outline-light" data-act="edit">Изменить</button>
+          <button class="btn btn-xs btn-outline-danger ms-1" data-act="delete">Удалить</button>
         </td>
       </tr>`;
   }
@@ -93,8 +94,26 @@
   function bindRowActions() {
     document.querySelectorAll('tr[data-cid]').forEach(tr => {
       const cid = tr.dataset.cid;
+      const title = tr.querySelector('td:nth-child(2)').innerText.trim();
       tr.querySelector('button[data-act="edit"]').addEventListener('click', () => openEdit(cid));
+      tr.querySelector('button[data-act="delete"]').addEventListener('click', () => deleteContent(cid, title));
     });
+  }
+
+  async function deleteContent(id, title) {
+    const ok = await UI.confirmDialog({
+      title: 'Удалить контент',
+      text: `Удалить «${title}»? Запись будет помечена как удалённая и исчезнет из каталога.`,
+      confirmText: 'Удалить',
+      danger: true
+    });
+    if (!ok) return;
+    try {
+      await API.delete('/content/' + id);
+      load();
+    } catch (e) {
+      alert('Не удалось удалить: ' + (e.message || ''));
+    }
   }
 
   function bindSorting() {

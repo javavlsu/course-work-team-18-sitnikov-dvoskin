@@ -7,7 +7,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.cinema.exception.NotFoundException;
+import ru.cinema.model.Content;
 import ru.cinema.dto.common.PageResponse;
 import ru.cinema.dto.content.ContentDetailResponse;
 import ru.cinema.dto.content.ContentListItem;
@@ -42,8 +45,14 @@ public class ContentController {
     }
 
     @GetMapping("/{id}")
-    public ContentDetailResponse byId(@PathVariable Long id) {
-        return contentService.toDetail(contentService.getById(id));
+    public ContentDetailResponse byId(@PathVariable Long id, Authentication auth) {
+        Content c = contentService.getById(id);
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        if (c.getStatus() == ContentStatus.DELETED && !isAdmin) {
+            throw NotFoundException.of("Content", id);
+        }
+        return contentService.toDetail(c);
     }
 
     /** GET /api/v1/content/top — заявлен в API map Этап 8 (топ по рейтингу). */

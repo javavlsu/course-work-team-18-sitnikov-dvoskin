@@ -30,7 +30,7 @@ public class SeriesService {
 
     public Content getById(Long id) {
         Content c = contentService.getById(id);
-        if (c.getContentType() != ContentType.SERIES) {
+        if (c.getContentType() != ContentType.SERIES || c.getStatus() == ru.cinema.model.enums.ContentStatus.DELETED) {
             throw new ru.cinema.exception.NotFoundException("Сериал не найден: " + id);
         }
         return c;

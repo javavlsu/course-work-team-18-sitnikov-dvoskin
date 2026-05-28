@@ -670,8 +670,38 @@
     }, 250);
   }
 
+  function confirmDialog({ title = 'Подтверждение', text = '', confirmText = 'Подтвердить', cancelText = 'Отмена', danger = false } = {}) {
+    return new Promise((resolve) => {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = `
+        <div class="modal fade" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">${escapeHtml(title)}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+              </div>
+              <div class="modal-body">${escapeHtml(text)}</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" data-act="cancel">${escapeHtml(cancelText)}</button>
+                <button type="button" class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-act="ok">${escapeHtml(confirmText)}</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      const el = wrap.firstElementChild;
+      document.body.appendChild(el);
+      const modal = new bootstrap.Modal(el);
+      let result = false;
+      el.querySelector('[data-act="ok"]').addEventListener('click', () => { result = true; modal.hide(); });
+      el.addEventListener('hidden.bs.modal', () => { el.remove(); resolve(result); });
+      modal.show();
+    });
+  }
+
   global.UI = {
     escapeHtml,
+    confirmDialog,
     firstChar,
     avatarHue,
     avatarHtml,

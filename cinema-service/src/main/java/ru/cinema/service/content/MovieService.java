@@ -31,7 +31,7 @@ public class MovieService {
 
     public Content getById(Long id) {
         Content c = contentService.getById(id);
-        if (c.getContentType() != ContentType.MOVIE) {
+        if (c.getContentType() != ContentType.MOVIE || c.getStatus() == ru.cinema.model.enums.ContentStatus.DELETED) {
             throw new ru.cinema.exception.NotFoundException("Фильм не найден: " + id);
         }
         return c;

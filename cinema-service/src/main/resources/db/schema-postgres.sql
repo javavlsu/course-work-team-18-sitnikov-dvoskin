@@ -126,19 +126,6 @@ CREATE TABLE IF NOT EXISTS content_persons (
     CONSTRAINT chk_cp_role CHECK (role IN ('ACTOR','DIRECTOR'))
 );
 
--- ===== Этап 3: CollectionRating (оценка подборки 1–5) =====
-CREATE TABLE IF NOT EXISTS playlist_ratings (
-    id              BIGSERIAL PRIMARY KEY,
-    user_id         BIGINT          NOT NULL,
-    playlist_id     BIGINT          NOT NULL,
-    "value"         INT             NOT NULL CHECK ("value" >= 1 AND "value" <= 5),
-    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_pr_user     FOREIGN KEY (user_id)     REFERENCES users(id)     ON DELETE CASCADE,
-    CONSTRAINT fk_pr_playlist FOREIGN KEY (playlist_id) REFERENCES playlists(id) ON DELETE CASCADE,
-    CONSTRAINT uq_pr_user_playlist UNIQUE (user_id, playlist_id)
-);
-
 CREATE TABLE IF NOT EXISTS review_likes (
     id              BIGSERIAL PRIMARY KEY,
     review_id       BIGINT          NOT NULL,
@@ -181,6 +168,19 @@ CREATE TABLE IF NOT EXISTS playlist_content (
     PRIMARY KEY (playlist_id, content_id),
     CONSTRAINT fk_pc_playlist FOREIGN KEY (playlist_id) REFERENCES playlists(id) ON DELETE CASCADE,
     CONSTRAINT fk_pc_content FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
+);
+
+-- ===== Этап 3: CollectionRating (оценка подборки 1–5) =====
+CREATE TABLE IF NOT EXISTS playlist_ratings (
+    id              BIGSERIAL PRIMARY KEY,
+    user_id         BIGINT          NOT NULL,
+    playlist_id     BIGINT          NOT NULL,
+    "value"         INT             NOT NULL CHECK ("value" >= 1 AND "value" <= 5),
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pr_user     FOREIGN KEY (user_id)     REFERENCES users(id)     ON DELETE CASCADE,
+    CONSTRAINT fk_pr_playlist FOREIGN KEY (playlist_id) REFERENCES playlists(id) ON DELETE CASCADE,
+    CONSTRAINT uq_pr_user_playlist UNIQUE (user_id, playlist_id)
 );
 
 CREATE TABLE IF NOT EXISTS tags (

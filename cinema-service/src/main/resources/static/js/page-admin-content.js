@@ -19,6 +19,38 @@
   // Сейчас редактируется существующий контент? { id, contentType } или null
   let editing = null;
 
+  // Кэш доступных тегов и выбранных в текущей модалке
+  let allTags = null;
+  const selectedTagIds = new Set();
+
+  async function loadAllTags() {
+    if (allTags) return allTags;
+    try { allTags = await API.listTags(); }
+    catch (e) { allTags = []; }
+    return allTags;
+  }
+  async function renderTagsChips(preselect) {
+    const mount = document.getElementById('nc-tags-mount');
+    if (!mount) return;
+    selectedTagIds.clear();
+    (preselect || []).forEach(id => selectedTagIds.add(id));
+    const tags = await loadAllTags();
+    if (!tags.length) {
+      mount.innerHTML = '<span class="text-muted small">Тегов пока нет — создайте в разделе «Теги».</span>';
+      return;
+    }
+    mount.innerHTML = tags.map(t =>
+      `<button type="button" class="filter-chip${selectedTagIds.has(t.id) ? ' is-active' : ''}" data-tag-id="${t.id}">${UI.escapeHtml(t.name)}</button>`
+    ).join('');
+    mount.querySelectorAll('button[data-tag-id]').forEach(b => {
+      b.addEventListener('click', () => {
+        const id = parseInt(b.dataset.tagId, 10);
+        if (selectedTagIds.has(id)) { selectedTagIds.delete(id); b.classList.remove('is-active'); }
+        else { selectedTagIds.add(id); b.classList.add('is-active'); }
+      });
+    });
+  }
+
   const STATUS_MAP = {
     DRAFT:      ['badge-draft',      'Черновик'],
     MODERATION: ['badge-moderation', 'На модерации'],
@@ -197,6 +229,7 @@
     document.getElementById('nc-imdb-search').value = '';
     document.getElementById('nc-imdb-results').setAttribute('hidden', '');
     document.getElementById('nc-imdb-results').innerHTML = '';
+    renderTagsChips([]);
     new bootstrap.Modal(modal).show();
   }
 
@@ -242,6 +275,8 @@
         set('nc-episodes',  c.totalEpisodes);
         if (document.getElementById('nc-finished')) document.getElementById('nc-finished').checked = !!c.isFinished;
       }
+      const preIds = (c.tags || []).map(t => t.id);
+      renderTagsChips(preIds);
     } catch (e) {
       err.textContent = 'Не удалось загрузить: ' + (e.message || '');
       err.removeAttribute('hidden');
@@ -468,7 +503,7 @@
         language:      strOrNull('nc-language'),
         imdbId:        strOrNull('nc-imdb'),
         kinopoiskId:   strOrNull('nc-kp'),
-        tagIds:        null,
+        tagIds:        Array.from(selectedTagIds),
         duration:      isMovie ? numOrNull('nc-duration') : null,
         budget:        isMovie ? numOrNull('nc-budget') : null,
         boxOffice:     isMovie ? numOrNull('nc-boxoffice') : null,

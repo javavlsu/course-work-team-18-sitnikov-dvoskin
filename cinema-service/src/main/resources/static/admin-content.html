@@ -211,9 +211,17 @@
             <div class="mb-3">
               <label class="form-label d-flex justify-content-between align-items-center" for="nc-description">
                 <span>Описание</span>
-                <button type="button" class="g-btn g-btn-ghost g-btn-sm" id="nc-desc-translate" title="Перевести на русский">Перевести на RU</button>
+                <button type="button" class="g-btn g-btn-ghost g-btn-sm" id="nc-desc-translate" title="Перевести на RU">Перевести на RU</button>
               </label>
               <textarea class="form-control" id="nc-description" rows="4"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Теги</label>
+              <div id="nc-tags-mount" class="d-flex flex-wrap gap-2">
+                <span class="text-muted small">загрузка…</span>
+              </div>
+              <div class="text-muted small mt-1">Создавать новые теги — в разделе «Теги» бокового меню.</div>
             </div>
 
             <!-- Movie-only fields -->

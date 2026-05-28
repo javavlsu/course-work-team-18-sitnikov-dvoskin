@@ -43,12 +43,74 @@
 
       loadReviews();
       loadPlaylists();
+      loadFollow();
     } catch (e) {
       document.querySelector('main').innerHTML = `<div class="container my-5">${UI.errorState({
         title: e.status === 404 ? 'Пользователь не найден' : 'Не удалось загрузить',
         text: e.message,
         onRetry: load
       })}</div>`;
+    }
+  }
+
+  // ===== Follow: счётчики + кнопка Подписаться/Отписаться =====
+  // Использует существующие /users/{username}/follow (POST/DELETE) и списки /followers, /following.
+  async function loadFollow() {
+    try {
+      const [followers, following] = await Promise.all([
+        API.get(`/users/${encodeURIComponent(username)}/followers`),
+        API.get(`/users/${encodeURIComponent(username)}/following`)
+      ]);
+      document.getElementById('cnt-followers').textContent = followers.length;
+      document.getElementById('cnt-following').textContent = following.length;
+
+      const btn = document.getElementById('follow-btn');
+      if (!btn) return;
+      const me = Auth.isAuthenticated() ? Auth.user : null;
+      if (!me || me.username === username) {
+        // Свой профиль или анонимный — кнопку не показываем
+        return;
+      }
+      // Проверяем, фолловит ли уже текущий юзер целевого
+      const isFollowing = followers.some(u => u && u.username === me.username);
+      paintFollowBtn(btn, isFollowing);
+      btn.hidden = false;
+      btn.addEventListener('click', async () => {
+        const wasFollowing = btn.dataset.state === 'following';
+        btn.disabled = true;
+        try {
+          if (wasFollowing) {
+            await API.delete(`/users/${encodeURIComponent(username)}/follow`);
+            paintFollowBtn(btn, false);
+            const el = document.getElementById('cnt-followers');
+            el.textContent = Math.max(0, parseInt(el.textContent || '0', 10) - 1);
+          } else {
+            await API.post(`/users/${encodeURIComponent(username)}/follow`, {});
+            paintFollowBtn(btn, true);
+            const el = document.getElementById('cnt-followers');
+            el.textContent = parseInt(el.textContent || '0', 10) + 1;
+          }
+        } catch (e) {
+          alert(e.message || 'Не удалось');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    } catch (e) {
+      console.warn('[user-profile] follow', e);
+    }
+  }
+  function paintFollowBtn(btn, following) {
+    if (following) {
+      btn.textContent = 'Отписаться';
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-outline-light');
+      btn.dataset.state = 'following';
+    } else {
+      btn.textContent = 'Подписаться';
+      btn.classList.add('btn-primary');
+      btn.classList.remove('btn-outline-light');
+      btn.dataset.state = 'not-following';
     }
   }
 

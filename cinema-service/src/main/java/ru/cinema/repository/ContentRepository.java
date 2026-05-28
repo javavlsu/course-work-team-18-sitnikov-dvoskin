@@ -213,7 +213,7 @@ public interface ContentRepository extends JpaRepository<Content, Long>, JpaSpec
      * <p>Используется алгоритмом рекомендаций (content-based) для построения
      * векторов «контент → теги» без N+1 запросов.</p>
      */
-    @Query("SELECT DISTINCT c FROM Content c LEFT JOIN FETCH c.tags WHERE c.status = :status")
+    @Query("SELECT DISTINCT c FROM Content c LEFT JOIN FETCH c.tags LEFT JOIN FETCH c.genres WHERE c.status = :status")
     List<Content> findAllPublishedWithTags(@Param("status") ContentStatus status);
 
     /**

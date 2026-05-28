@@ -15,19 +15,6 @@ INSERT INTO tags (name, slug, description, usage_count) VALUES
     ('Основано на реальных событиях', 'true-story', 'Снято по реальным событиям',    0)
 ON CONFLICT (slug) DO NOTHING;
 
--- Несколько демо-связок контент ↔ реальный тег. Остальное проставляется админом через UI.
-INSERT INTO content_tags (content_id, tag_id)
-SELECT c.id, t.id FROM content c, tags t WHERE
-  (c.imdb_id = 'tt15398776' AND t.slug = 'true-story') OR
-  (c.imdb_id = 'tt7160372'  AND t.slug = 'true-story') OR
-  (c.imdb_id = 'tt0111161'  AND t.slug = 'cult') OR
-  (c.imdb_id = 'tt0068646'  AND t.slug = 'cult') OR
-  (c.imdb_id = 'tt0118767'  AND t.slug = 'nostalgia') OR
-  (c.imdb_id = 'tt0231507'  AND t.slug = 'nostalgia') OR
-  (c.imdb_id = 'tt0903747'  AND t.slug = 'cult') OR
-  (c.imdb_id = 'tt0108778'  AND t.slug = 'nostalgia')
-ON CONFLICT (content_id, tag_id) DO NOTHING;
-
 -- ---------------------------------------------------------------------
 -- 2. USERS (8: 1 admin + 7 user). Пароль для всех: password123
 -- bcrypt-хэш проверен; cost=10
@@ -2234,3 +2221,23 @@ SELECT c.id, p.id, 'ACTOR'
 FROM content c JOIN persons p ON p.name = 'Аль Пачино'
 WHERE c.imdb_id IN ('tt0068646')
 ON CONFLICT DO NOTHING;
+
+-- Несколько демо-связок контент ↔ реальный тег. Остальное проставляется админом через UI.
+INSERT INTO content_tags (content_id, tag_id)
+SELECT c.id, t.id FROM content c, tags t WHERE
+  (c.imdb_id = 'tt15398776' AND t.slug = 'true-story') OR
+  (c.imdb_id = 'tt7160372'  AND t.slug = 'true-story') OR
+  (c.imdb_id = 'tt0111161'  AND t.slug = 'cult') OR
+  (c.imdb_id = 'tt0068646'  AND t.slug = 'cult') OR
+  (c.imdb_id = 'tt0118767'  AND t.slug = 'nostalgia') OR
+  (c.imdb_id = 'tt0231507'  AND t.slug = 'nostalgia') OR
+  (c.imdb_id = 'tt0903747'  AND t.slug = 'cult') OR
+  (c.imdb_id = 'tt0108778'  AND t.slug = 'nostalgia')
+ON CONFLICT (content_id, tag_id) DO NOTHING;
+
+-- Пересчёт usage_count у тегов
+UPDATE tags SET usage_count = sub.cnt
+FROM (SELECT tag_id, COUNT(*) AS cnt FROM content_tags WHERE tag_id IN
+        (SELECT id FROM tags WHERE slug IN ('newyear','halloween','nostalgia','cult','true-story'))
+      GROUP BY tag_id) sub
+WHERE tags.id = sub.tag_id;

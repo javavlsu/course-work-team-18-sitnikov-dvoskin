@@ -1515,6 +1515,25 @@ textarea.form-control:focus {
     inset 0 -1px 0 rgba(0, 0, 0, 0.10);
 }
 
+/* Тонкие пометки (теги) — приглушённый вариант .tag-badge, чтобы визуально
+   отличать от жанров */
+.tag-badge.tag-badge-soft {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  font-size: 12px;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.tag-badge.tag-badge-soft:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: var(--text);
+  box-shadow: none;
+}
+
 /* ===== Admin dashboard — open layout в языке .g-stat-row главной =====
    Никаких чёрных карточек: hairline-полоса с цифрами + лёгкие чипы-разбивки. */
 

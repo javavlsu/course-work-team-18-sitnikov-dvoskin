@@ -43,10 +43,19 @@
       </div>
     </div>
 
-    <div class="catalog-toolbar">
-      <div class="filter-rail-group" id="tag-group">
-        <button class="filter-chip is-active" data-tag="">Все жанры</button>
-        <span class="text-muted small">загрузка…</span>
+    <div class="filter-rail-group mb-2" id="genre-group">
+      <button class="filter-chip is-active" data-genre="">Все жанры</button>
+      <span class="text-muted small">загрузка…</span>
+    </div>
+
+    <div class="filter-rail-group mb-3" id="tag-group">
+      <button class="filter-chip is-active" data-tag="">Все теги</button>
+      <span class="text-muted small">загрузка…</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <div class="catalog-meta flex-grow-1">
+        <span id="result-count">—</span>
       </div>
       <div class="catalog-sort" data-sort-root>
         <button class="catalog-sort-trigger" type="button" data-sort-trigger aria-haspopup="menu" aria-expanded="false">
@@ -61,10 +70,6 @@
           <button class="catalog-sort-option"           role="menuitemradio" aria-checked="false" data-sort="alpha">А-Я</button>
         </div>
       </div>
-    </div>
-
-    <div class="catalog-meta">
-      <span id="result-count">—</span>
     </div>
 
     <div class="row g-4 g-lg-3" id="grid"></div>

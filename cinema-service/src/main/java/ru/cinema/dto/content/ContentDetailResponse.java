@@ -1,5 +1,6 @@
 package ru.cinema.dto.content;
 
+import ru.cinema.dto.genre.GenreResponse;
 import ru.cinema.dto.tag.TagResponse;
 import ru.cinema.model.Content;
 import ru.cinema.model.Movie;
@@ -20,6 +21,7 @@ public record ContentDetailResponse(
         ContentType contentType,
         String country,
         List<TagResponse> tags,
+        List<GenreResponse> genres,
 
         String description,
         String language,
@@ -45,6 +47,8 @@ public record ContentDetailResponse(
         if (c == null) return null;
         List<TagResponse> tags = c.getTags() == null ? List.of()
                 : c.getTags().stream().map(TagResponse::of).toList();
+        List<GenreResponse> genres = c.getGenres() == null ? List.of()
+                : c.getGenres().stream().map(GenreResponse::of).toList();
 
         Integer duration = null;
         BigDecimal budget = null;
@@ -73,6 +77,7 @@ public record ContentDetailResponse(
                 c.getContentType(),
                 c.getCountry(),
                 tags,
+                genres,
                 c.getDescription(),
                 c.getLanguage(),
                 c.getImdbId(),

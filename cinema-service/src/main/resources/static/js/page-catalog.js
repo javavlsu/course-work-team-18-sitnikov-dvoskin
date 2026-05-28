@@ -18,6 +18,7 @@
     q: '',
     type: '',
     tag: null,
+    genre: null,
     sort: 'new',
     page: 0,
     loading: false,
@@ -34,6 +35,7 @@
     state.q = p.get('q') || '';
     state.type = p.get('type') || '';
     state.tag = p.get('tag') ? (parseInt(p.get('tag'), 10) || null) : null;
+    state.genre = p.get('genre') ? (parseInt(p.get('genre'), 10) || null) : null;
     state.sort = p.get('sort') || 'new';
   }
   function writeUrl() {
@@ -41,6 +43,7 @@
     if (state.q) p.set('q', state.q);
     if (state.type) p.set('type', state.type);
     if (state.tag) p.set('tag', state.tag);
+    if (state.genre) p.set('genre', state.genre);
     if (state.sort && state.sort !== 'new') p.set('sort', state.sort);
     const qs = p.toString();
     history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
@@ -66,6 +69,12 @@
     document.querySelectorAll('#tag-group .filter-chip').forEach(b => {
       const v = b.dataset.tag === '' ? null : parseInt(b.dataset.tag, 10);
       b.classList.toggle('is-active', v === state.tag);
+    });
+  }
+  function applyGenreChips() {
+    document.querySelectorAll('#genre-group .filter-chip').forEach(b => {
+      const v = b.dataset.genre === '' ? null : parseInt(b.dataset.genre, 10);
+      b.classList.toggle('is-active', v === state.genre);
     });
   }
   function applySortActive() {
@@ -172,12 +181,37 @@
     });
   }
 
-  // ===== Tags =====
+  // ===== Genres (широкие категории: Драма, Боевик, ...) =====
+  async function loadGenres() {
+    try {
+      const genres = await API.listGenres();
+      const group = document.getElementById('genre-group');
+      group.innerHTML = `<button class="filter-chip" data-genre="">Все жанры</button>` +
+        genres.slice(0, 24).map(g => `<button class="filter-chip" data-genre="${g.id}">${UI.escapeHtml(g.name)}</button>`).join('');
+      group.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-genre]');
+        if (!btn) return;
+        state.genre = btn.dataset.genre === '' ? null : parseInt(btn.dataset.genre, 10);
+        writeUrl();
+        applyGenreChips();
+        reset();
+      });
+      applyGenreChips();
+    } catch (e) {
+      console.warn('[catalog] genres', e);
+    }
+  }
+
+  // ===== Tags (тонкие пометки: ностальгия, новогоднее, ...) =====
   async function loadTags() {
     try {
       const tags = await API.listTags();
       const group = document.getElementById('tag-group');
-      group.innerHTML = `<button class="filter-chip" data-tag="">Все жанры</button>` +
+      if (!tags.length) {
+        group.style.display = 'none';
+        return;
+      }
+      group.innerHTML = `<button class="filter-chip" data-tag="">Все теги</button>` +
         tags.slice(0, 24).map(t => `<button class="filter-chip" data-tag="${t.id}">${UI.escapeHtml(t.name)}</button>`).join('');
       group.addEventListener('click', (e) => {
         const btn = e.target.closest('button[data-tag]');
@@ -242,11 +276,14 @@
 
     try {
       const params = { sort: state.sort, page: state.page, size: PAGE_SIZE };
-      if (state.q)    params.q = state.q;
-      if (state.type) params.type = state.type;
-      if (state.tag)  params.tag = state.tag;
+      if (state.q)     params.q = state.q;
+      if (state.type)  params.type = state.type;
+      if (state.tag)   params.tag = state.tag;
+      if (state.genre) params.genre = state.genre;
 
-      const page = await API.listContent(params);
+      // /search умеет оба фильтра (tag + genre); /content только tag.
+      const usesSearch = !!state.genre || !!state.q;
+      const page = usesSearch ? await API.search(params) : await API.listContent(params);
       const items = (page && page.items) || [];
       const visible = items.filter(it => it && it.posterUrl);
 
@@ -322,6 +359,7 @@
     bindSort();
     applyTypeChips();
     applySortActive();
+    loadGenres();
     loadTags();
     setupSentinel();
     fetchPage(false);

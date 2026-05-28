@@ -144,6 +144,10 @@
       return this.get('/tags');
     },
 
+    listGenres() {
+      return this.get('/genres');
+    },
+
     contentComments(id, page = 0, size = 20) {
       return this.get(`/content/${id}/comments?page=${page}&size=${size}`);
     },

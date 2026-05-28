@@ -61,8 +61,9 @@
     const url = UI.urlForContent(item);
     const title = UI.escapeHtml(item.title || 'Без названия');
     const year = item.releaseYear || '';
-    const tagsLine = item.tags && item.tags.length
-      ? UI.escapeHtml(item.tags.slice(0, 2).map(t => t.name).join(' · '))
+    const labels = (item.genres && item.genres.length) ? item.genres : (item.tags || []);
+    const tagsLine = labels.length
+      ? UI.escapeHtml(labels.slice(0, 2).map(t => t.name).join(' · '))
       : (item.country ? UI.escapeHtml(UI.formatCountry(item.country)) : '');
     const ratingStr = UI.formatRating(item.averageRating);
     const typeLabel = item.contentType === 'SERIES' ? 'Сериал' : 'Фильм';
@@ -91,8 +92,9 @@
     const url = UI.urlForContent(item);
     const title = UI.escapeHtml(item.title || 'Без названия');
     const year = item.releaseYear || '';
-    const tagsLine = item.tags && item.tags.length
-      ? UI.escapeHtml(item.tags[0].name)
+    const labelsMini = (item.genres && item.genres.length) ? item.genres : (item.tags || []);
+    const tagsLine = labelsMini.length
+      ? UI.escapeHtml(labelsMini[0].name)
       : (item.country ? UI.escapeHtml(UI.formatCountry(item.country)) : '');
     const ratingStr = UI.formatRating(item.averageRating);
     const posterStyle = item.posterUrl

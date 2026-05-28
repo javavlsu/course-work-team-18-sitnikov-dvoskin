@@ -1,5 +1,6 @@
 package ru.cinema.dto.content;
 
+import ru.cinema.dto.genre.GenreResponse;
 import ru.cinema.dto.tag.TagResponse;
 import ru.cinema.model.Content;
 import ru.cinema.model.enums.ContentType;
@@ -16,12 +17,15 @@ public record ContentListItem(
         BigDecimal averageRating,
         ContentType contentType,
         String country,
-        List<TagResponse> tags
+        List<TagResponse> tags,
+        List<GenreResponse> genres
 ) {
     public static ContentListItem of(Content c) {
         if (c == null) return null;
         List<TagResponse> tags = c.getTags() == null ? List.of()
                 : c.getTags().stream().map(TagResponse::of).toList();
+        List<GenreResponse> genres = c.getGenres() == null ? List.of()
+                : c.getGenres().stream().map(GenreResponse::of).toList();
         return new ContentListItem(
                 c.getId(),
                 c.getTitle(),
@@ -31,7 +35,8 @@ public record ContentListItem(
                 c.getAverageRating(),
                 c.getContentType(),
                 c.getCountry(),
-                tags
+                tags,
+                genres
         );
     }
 }

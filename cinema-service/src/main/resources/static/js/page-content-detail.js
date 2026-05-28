@@ -86,14 +86,14 @@
     // Description
     setText('hero-description', c.description || 'Описание скоро появится.');
 
-    // Tags row (clickable pills)
-    if (c.tags && c.tags.length) {
-      setHtml('tag-row', c.tags.map(t =>
-        `<a href="/catalog?tag=${t.id}" class="tag-badge">${UI.escapeHtml(t.name)}</a>`
-      ).join(''));
-    } else {
-      setHtml('tag-row', '');
-    }
+    // Сначала жанры (широкие категории), потом теги (тонкие пометки). Оба кликабельны.
+    const genreBadges = (c.genres || []).map(g =>
+      `<a href="/catalog?genre=${g.id}" class="tag-badge">${UI.escapeHtml(g.name)}</a>`
+    );
+    const tagBadges = (c.tags || []).map(t =>
+      `<a href="/catalog?tag=${t.id}" class="tag-badge tag-badge-soft">${UI.escapeHtml(t.name)}</a>`
+    );
+    setHtml('tag-row', genreBadges.concat(tagBadges).join(''));
 
     // CTA write-review href
     $('cta-write-review').setAttribute('href', `/reviews/new?contentId=${c.id}`);

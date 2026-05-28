@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cinema.dto.common.PageResponse;
 import ru.cinema.dto.playlist.*;
+import ru.cinema.model.Playlist;
 import ru.cinema.security.CurrentUser;
 import ru.cinema.service.playlist.PlaylistService;
+import ru.cinema.service.rating.PlaylistRatingService;
 
 @RestController
 @RequestMapping("/api/v1/playlists")
@@ -18,9 +20,15 @@ import ru.cinema.service.playlist.PlaylistService;
 public class PlaylistController {
 
     private final PlaylistService playlistService;
+    private final PlaylistRatingService ratingService;
 
-    public PlaylistController(PlaylistService playlistService) {
+    public PlaylistController(PlaylistService playlistService, PlaylistRatingService ratingService) {
         this.playlistService = playlistService;
+        this.ratingService = ratingService;
+    }
+
+    private PlaylistDetailResponse toDetail(Playlist p) {
+        return PlaylistDetailResponse.of(p, ratingService.averageFor(p.getId()), ratingService.countFor(p.getId()));
     }
 
     @GetMapping
@@ -33,19 +41,19 @@ public class PlaylistController {
 
     @GetMapping("/{id}")
     public PlaylistDetailResponse byId(@PathVariable Long id) {
-        return PlaylistDetailResponse.of(playlistService.getVisible(id, CurrentUser.currentUserId()));
+        return toDetail(playlistService.getVisible(id, CurrentUser.currentUserId()));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlaylistDetailResponse create(@Valid @RequestBody CreatePlaylistRequest req) {
-        return PlaylistDetailResponse.of(playlistService.create(CurrentUser.requireUserId(), req));
+        return toDetail(playlistService.create(CurrentUser.requireUserId(), req));
     }
 
     @PatchMapping("/{id}")
     public PlaylistDetailResponse update(@PathVariable Long id,
                                          @Valid @RequestBody UpdatePlaylistRequest req) {
-        return PlaylistDetailResponse.of(playlistService.update(id, CurrentUser.requireUserId(), req));
+        return toDetail(playlistService.update(id, CurrentUser.requireUserId(), req));
     }
 
     @DeleteMapping("/{id}")
@@ -57,17 +65,17 @@ public class PlaylistController {
     @PostMapping("/{id}/items")
     public PlaylistDetailResponse addItem(@PathVariable Long id,
                                           @Valid @RequestBody AddPlaylistItemRequest req) {
-        return PlaylistDetailResponse.of(playlistService.addItem(id, CurrentUser.requireUserId(), req));
+        return toDetail(playlistService.addItem(id, CurrentUser.requireUserId(), req));
     }
 
     @DeleteMapping("/{id}/items/{contentId}")
     public PlaylistDetailResponse removeItem(@PathVariable Long id, @PathVariable Long contentId) {
-        return PlaylistDetailResponse.of(playlistService.removeItem(id, CurrentUser.requireUserId(), contentId));
+        return toDetail(playlistService.removeItem(id, CurrentUser.requireUserId(), contentId));
     }
 
     @PatchMapping("/{id}/items/reorder")
     public PlaylistDetailResponse reorder(@PathVariable Long id,
                                           @Valid @RequestBody ReorderItemsRequest req) {
-        return PlaylistDetailResponse.of(playlistService.reorder(id, CurrentUser.requireUserId(), req));
+        return toDetail(playlistService.reorder(id, CurrentUser.requireUserId(), req));
     }
 }

@@ -9,6 +9,8 @@ import ru.cinema.model.PlaylistRating;
 import ru.cinema.repository.PlaylistRatingRepository;
 import ru.cinema.repository.PlaylistRepository;
 
+import java.util.Optional;
+
 /**
  * PlaylistRatingService — оценки подборок (сущность CollectionRating из Этапа 3).
  * Шкала 1–5.
@@ -60,4 +62,10 @@ public class PlaylistRatingService {
     }
 
     public long countFor(Long playlistId) { return prRepo.countByPlaylist_Id(playlistId); }
+
+    /** Текущая оценка пользователя для подборки, либо пусто, если не голосовал. */
+    public Optional<PlaylistRatingResponse> myRating(Long userId, Long playlistId) {
+        return prRepo.findByUser_IdAndPlaylist_Id(userId, playlistId)
+                .map(pr -> PlaylistRatingResponse.of(pr, averageFor(playlistId), countFor(playlistId)));
+    }
 }

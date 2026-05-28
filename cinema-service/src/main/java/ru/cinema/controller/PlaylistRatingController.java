@@ -21,6 +21,13 @@ public class PlaylistRatingController {
 
     public PlaylistRatingController(PlaylistRatingService service) { this.service = service; }
 
+    @GetMapping("/me")
+    public ResponseEntity<PlaylistRatingResponse> my(@PathVariable Long playlistId) {
+        return service.myRating(CurrentUser.requireUserId(), playlistId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
     @PutMapping
     public PlaylistRatingResponse rate(@PathVariable Long playlistId,
                                        @Valid @RequestBody RateRequest req) {

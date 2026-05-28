@@ -17,9 +17,11 @@ public record PlaylistDetailResponse(
         LocalDateTime updatedAt,
         AuthorRef owner,
         int itemsCount,
-        List<PlaylistItemResponse> items
+        List<PlaylistItemResponse> items,
+        double ratingAverage,
+        long ratingsCount
 ) {
-    public static PlaylistDetailResponse of(Playlist p) {
+    public static PlaylistDetailResponse of(Playlist p, double ratingAverage, long ratingsCount) {
         List<PlaylistItemResponse> items = p.getPlaylistContents() == null ? List.of()
                 : p.getPlaylistContents().stream()
                     .sorted(Comparator.comparing(pc -> pc.getSortOrder() == null ? Integer.MAX_VALUE : pc.getSortOrder()))
@@ -35,7 +37,9 @@ public record PlaylistDetailResponse(
                 p.getUpdatedAt(),
                 AuthorRef.of(p.getUser()),
                 items.size(),
-                items
+                items,
+                ratingAverage,
+                ratingsCount
         );
     }
 }

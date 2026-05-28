@@ -47,6 +47,19 @@
           <a class="btn btn-outline-light" id="edit-link" href="#" hidden>Редактировать</a>
           <button class="btn btn-outline-danger" id="delete-btn" hidden>Удалить</button>
         </div>
+
+        <!-- Оценка подборки 1–5 (CollectionRating из Этапа 3) -->
+        <div class="mt-4" id="rating-block">
+          <div class="text-muted small mb-1">Оцените подборку</div>
+          <div class="d-flex align-items-center flex-wrap gap-3">
+            <div class="star-rating" id="pl-stars" data-star-rating></div>
+            <span class="rating-inline" id="pl-rating-summary" hidden></span>
+            <button type="button" class="btn btn-xs btn-outline-light" id="pl-rating-remove" hidden>Убрать оценку</button>
+          </div>
+          <div class="text-muted small mt-1" id="pl-rating-auth-hint" hidden>
+            <a href="#" id="pl-rating-login-link">Войдите</a>, чтобы оценить подборку
+          </div>
+        </div>
       </div>
     </section>
 

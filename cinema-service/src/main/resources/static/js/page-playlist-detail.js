@@ -33,7 +33,8 @@
     if (!c) return '';
     const url = c.contentType === 'SERIES' ? `/series/${c.id}` : `/movies/${c.id}`;
     const rating = UI.formatRating(c.averageRating);
-    const tags = c.tags && c.tags.length ? c.tags.slice(0, 2).map(t => UI.escapeHtml(t.name)).join(' · ') : '';
+    const labels = (c.genres && c.genres.length) ? c.genres : (c.tags || []);
+    const tags = labels.length ? labels.slice(0, 2).map(t => UI.escapeHtml(t.name)).join(' · ') : '';
     return `
       <div class="playlist-item-row" data-cid="${c.id}">
         <div class="order-num">${String(idx + 1).padStart(2, '0')}</div>
@@ -49,6 +50,103 @@
       </div>`;
   }
 
+  // ===== Rating block (5 stars, по образу content-detail) =====
+  const ratingState = { my: 0, average: 0, count: 0 };
+
+  function renderRatingSummary() {
+    const sum = document.getElementById('pl-rating-summary');
+    if (!sum) return;
+    if (ratingState.count > 0) {
+      sum.hidden = false;
+      sum.innerHTML = `${UI.iconSparkle({ size: 14 })}<span>${UI.formatRating(ratingState.average)}</span><span class="text-muted">· ${ratingState.count} ${UI.pluralize(ratingState.count, ['голос', 'голоса', 'голосов'])}</span>`;
+    } else {
+      sum.hidden = true;
+    }
+  }
+  function paintStars(value) {
+    document.querySelectorAll('#pl-stars button').forEach(b => {
+      b.classList.toggle('is-active', +b.dataset.v <= value);
+    });
+    const rm = document.getElementById('pl-rating-remove');
+    if (rm) rm.hidden = !(value > 0);
+  }
+  function bindRating() {
+    const root = document.getElementById('pl-stars');
+    if (!root) return;
+    root.innerHTML = UI.starRatingTemplate({ max: 5 });
+    const authed = Auth.isAuthenticated();
+    if (!authed) {
+      // Анонимам показываем подсказку и блокируем клики
+      const hint = document.getElementById('pl-rating-auth-hint');
+      if (hint) {
+        hint.hidden = false;
+        const a = document.getElementById('pl-rating-login-link');
+        if (a) a.href = `/login?next=${encodeURIComponent(location.pathname)}`;
+      }
+      root.querySelectorAll('button').forEach(b => b.disabled = true);
+      return;
+    }
+    const stars = root.querySelectorAll('button');
+    stars.forEach(b => {
+      b.addEventListener('mouseenter', () => {
+        const v = +b.dataset.v;
+        stars.forEach(x => x.classList.toggle('is-active', +x.dataset.v <= v));
+      });
+      b.addEventListener('click', async () => {
+        const v = +b.dataset.v;
+        try {
+          const res = await API.put(`/playlists/${id}/rating`, { value: v });
+          ratingState.my = res.value;
+          ratingState.average = res.average || 0;
+          ratingState.count = res.count || 0;
+          paintStars(ratingState.my);
+          renderRatingSummary();
+        } catch (e) {
+          alert(e.message || 'Не удалось сохранить оценку');
+        }
+      });
+    });
+    root.addEventListener('mouseleave', () => paintStars(ratingState.my));
+
+    const rm = document.getElementById('pl-rating-remove');
+    if (rm) rm.addEventListener('click', async () => {
+      try {
+        await API.delete(`/playlists/${id}/rating`);
+        ratingState.my = 0;
+        // count/average пересчитаем отдельным GET — backend на DELETE не возвращает summary
+        try {
+          const me = await API.get(`/playlists/${id}/rating/me`);
+          if (me) {
+            ratingState.average = me.average || 0;
+            ratingState.count = me.count || 0;
+          } else {
+            // Если /me вернул 204 — мы единственный кто голосовал; пересчёт через GET подборки
+            const p2 = await API.playlistById(id);
+            ratingState.average = p2.ratingAverage || 0;
+            ratingState.count = p2.ratingsCount || 0;
+          }
+        } catch {}
+        paintStars(0);
+        renderRatingSummary();
+      } catch (e) {
+        alert(e.message || 'Не удалось убрать оценку');
+      }
+    });
+  }
+  async function loadMyRating() {
+    if (!Auth.isAuthenticated()) return;
+    try {
+      const me = await API.get(`/playlists/${id}/rating/me`);
+      if (me) {
+        ratingState.my = me.value || 0;
+        paintStars(ratingState.my);
+      }
+    } catch (e) {
+      if (e && e.status === 401) return;
+      console.warn('[playlist] rating/me', e);
+    }
+  }
+
   async function load() {
     if (!id) {
       document.querySelector('main').innerHTML = `<div class="container my-5">${UI.errorState({ title: 'Подборка не найдена' })}</div>`;
@@ -57,6 +155,12 @@
     try {
       const p = await API.playlistById(id);
       document.title = `${p.title} · MovieHub`;
+
+      ratingState.average = p.ratingAverage || 0;
+      ratingState.count = p.ratingsCount || 0;
+      bindRating();
+      renderRatingSummary();
+      loadMyRating();
 
       // Cover (real mosaic)
       const heroCover = document.getElementById('hero-cover');

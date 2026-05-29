@@ -281,8 +281,8 @@
       if (state.tag)   params.tag = state.tag;
       if (state.genre) params.genre = state.genre;
 
-      // /search умеет оба фильтра (tag + genre); /content только tag.
-      const usesSearch = !!state.genre || !!state.q;
+      // Чистый текстовый запрос (без жанра) шлём в /content
+      const usesSearch = !!state.genre;
       const page = usesSearch ? await API.search(params) : await API.listContent(params);
       const items = (page && page.items) || [];
       const visible = items.filter(it => it && it.posterUrl);

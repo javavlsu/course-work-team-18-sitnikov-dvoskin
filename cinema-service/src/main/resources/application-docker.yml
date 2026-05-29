@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/cinemadb
+    driver-class-name: org.postgresql.Driver
+    username: cinema
+    password: cinema
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      platform: postgres
+      schema-locations: classpath:db/schema-postgres.sql,classpath:db/indexes-postgres.sql
+      data-locations: classpath:data-postgres.sql
+
+  devtools:
+    restart:
+      enabled: true
+      poll-interval: 1s
+      quiet-period: 400ms
+    livereload:
+      enabled: true
+      port: 35729
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+server:
+  port: 8080

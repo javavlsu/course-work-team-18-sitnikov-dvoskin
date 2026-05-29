@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Редактирование рецензии · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <main class="rev">
+
+    <!-- Sticky top toolbar: back · save state · primary CTA -->
+    <div class="rev-toolbar">
+      <a class="rev-toolbar-back" href="/me/reviews" aria-label="К моим рецензиям">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        <span>К моим рецензиям</span>
+      </a>
+      <div class="rev-toolbar-status" id="save-status" aria-live="polite"></div>
+      <div class="rev-toolbar-actions">
+        <button type="button" class="rv-action" id="publish-btn" hidden>Опубликовать</button>
+        <button type="button" class="rv-action rv-action-primary" id="save-btn">Сохранить</button>
+        <div class="rev-toolbar-menu" id="more-menu">
+          <button type="button" class="rev-toolbar-menu-trigger" id="more-trigger" aria-haspopup="true" aria-expanded="false" aria-label="Ещё">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+          </button>
+          <div class="rev-toolbar-menu-pop" id="more-pop" hidden>
+            <button type="button" class="rev-toolbar-menu-item rev-toolbar-menu-danger" id="delete-btn">Удалить рецензию</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rev-layout">
+
+      <!-- Left rail: poster + meta about what we're reviewing -->
+      <aside class="rev-rail">
+        <a class="rev-rail-card" id="content-link" href="#">
+          <div class="rev-rail-poster" id="rail-poster">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+          <div class="rev-rail-meta">
+            <div class="rev-rail-kicker">Рецензия на</div>
+            <div class="rev-rail-title" id="rail-title">Загрузка…</div>
+            <div class="rev-rail-sub" id="rail-sub"></div>
+          </div>
+        </a>
+        <div class="rev-rail-status" id="rail-status" hidden>
+          <div class="rev-rail-status-label">Статус</div>
+          <div class="rev-rail-status-value" id="rail-status-value"></div>
+        </div>
+      </aside>
+
+      <!-- Right column: editor -->
+      <section class="rev-editor">
+
+        <div class="auth-alert" id="form-error" hidden></div>
+
+        <form id="review-form" class="rev-form" autocomplete="off">
+
+          <!-- Rating: row of 10 sparkle stars + live adjective -->
+          <div class="rev-field">
+            <div class="rev-field-head">
+              <label class="rev-field-label">Твоя оценка</label>
+              <button type="button" class="rev-field-clear" id="rating-clear" hidden>Без оценки</button>
+            </div>
+            <div class="rev-stars-row">
+              <div class="rev-stars" id="stars" role="radiogroup" aria-label="Оценка от 1 до 5" tabindex="0">
+                <!-- buttons injected by JS, sparkle icon per item -->
+              </div>
+              <div class="rev-stars-readout">
+                <span class="rev-stars-num" id="rating-num">—</span>
+                <span class="rev-stars-adj" id="rating-adj">оценка не выбрана</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="rev-field">
+            <div class="rev-field-head">
+              <label class="rev-field-label" for="r-title">Заголовок</label>
+              <span class="rev-field-counter"><span id="title-counter">0</span> / 200</span>
+            </div>
+            <input class="rev-input" type="text" id="r-title" maxlength="200"
+                   placeholder="Например: Спорная экранизация со своим стилем" autocomplete="off">
+          </div>
+
+          <!-- Body -->
+          <div class="rev-field">
+            <div class="rev-field-head">
+              <label class="rev-field-label" for="r-body">Текст рецензии</label>
+              <span class="rev-field-counter"><span id="body-counter">0</span> символов</span>
+            </div>
+            <textarea class="rev-input rev-textarea" id="r-body" rows="14"
+                      placeholder="Расскажи о фильме. Что зацепило, что разочаровало, кому стоит смотреть."></textarea>
+          </div>
+
+        </form>
+      </section>
+    </div>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-review-edit.js"></script>
+</body>
+</html>

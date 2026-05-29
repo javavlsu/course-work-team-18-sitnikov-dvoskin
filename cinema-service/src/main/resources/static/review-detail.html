@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Рецензия · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <main class="rv">
+
+    <article class="rv-shell" id="article">
+
+      <a class="rv-content" id="content-link" href="#" aria-label="К фильму">
+        <div class="rv-content-poster" id="poster-mount">
+          <div class="skeleton" style="width:100%;height:100%;"></div>
+        </div>
+        <div class="rv-content-meta">
+          <div class="rv-kicker">Рецензия на</div>
+          <div class="rv-content-title" id="content-title">Загрузка…</div>
+          <div class="rv-content-sub" id="content-meta"></div>
+        </div>
+      </a>
+
+      <header class="rv-head">
+        <div class="rv-head-row">
+          <span class="score-chip" id="score-pill" hidden>
+            <span class="score-chip-label">Оценка</span>
+            <span class="score-chip-value">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1L13.8 9.2L22 11L13.8 12.8L12 21L10.2 12.8L2 11L10.2 9.2Z"/></svg>
+              <span class="score-chip-num" id="score-chip-num">—</span>
+            </span>
+          </span>
+          <span class="badge badge-lg" id="status-badge" hidden></span>
+        </div>
+        <h1 class="rv-title" id="r-title">Загрузка…</h1>
+
+        <div class="rv-byline">
+          <a class="rv-author" id="author-link" href="#">
+            <span class="user-avatar" id="author-avatar">?</span>
+            <span class="rv-author-name" id="author-name">…</span>
+          </a>
+          <span class="rv-byline-sep" aria-hidden="true">·</span>
+          <span class="rv-byline-item" id="r-date"></span>
+          <span class="rv-byline-sep" aria-hidden="true">·</span>
+          <span class="rv-byline-item" id="r-views"></span>
+        </div>
+      </header>
+
+      <div class="rv-body" id="r-body"></div>
+
+      <footer class="rv-foot">
+        <button type="button" class="rv-like" id="like-btn" aria-pressed="false">
+          <svg class="rv-like-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span class="rv-like-label" id="like-label">Нравится</span>
+          <span class="rv-like-count" id="like-count">0</span>
+        </button>
+        <div class="rv-foot-actions" id="author-actions" hidden>
+          <a class="rv-action" id="edit-link" href="#">Редактировать</a>
+          <button class="rv-action rv-action-danger" id="delete-btn" type="button">Удалить</button>
+        </div>
+      </footer>
+
+    </article>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-review-detail.js"></script>
+</body>
+</html>

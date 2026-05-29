@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">MovieHub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="search.html">Поиск</a></li>
+                    <li class="nav-item"><a class="nav-link" href="movies.html">Фильмы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="series.html">Сериалы</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="profile.html">Профиль</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="user-avatar mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem;">АБ</div>
+                        <h4>Алексей Б.</h4>
+                        <p class="text-muted">@alex_b</p>
+                        <div class="mt-4">
+                            <div class="stats-card mb-3">
+                                <div class="stats-number">45</div>
+                                <div class="text-muted">Рецензий</div>
+                            </div>
+                            <div class="stats-card mb-3">
+                                <div class="stats-number">12</div>
+                                <div class="text-muted">Подборок</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-number">234</div>
+                                <div class="text-muted">Оценок</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#settings">Настройки</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#activity">Активность</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="settings">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Настройки профиля</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label">Имя пользователя</label>
+                                        <input type="text" class="form-control" value="alex_b">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="alex@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Текущий пароль</label>
+                                        <input type="password" class="form-control" placeholder="Введите текущий пароль">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Новый пароль</label>
+                                        <input type="password" class="form-control" placeholder="Введите новый пароль">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Подтвердите новый пароль</label>
+                                        <input type="password" class="form-control" placeholder="Повторите новый пароль">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="activity">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="content-placeholder" style="width: 60px; height: 90px; flex-shrink: 0;"></div>
+                                    <div class="ms-3 flex-grow-1">
+                                        <div class="fw-bold">Вы оценили фильм</div>
+                                        <div class="text-muted small">Название фильма</div>
+                                        <span class="rating-badge" style="font-size: 0.75rem;">5</span>
+                                        <span class="text-muted small ms-2">2 часа назад</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="content-placeholder" style="width: 60px; height: 90px; flex-shrink: 0;"></div>
+                                    <div class="ms-3 flex-grow-1">
+                                        <div class="fw-bold">Вы написали рецензию</div>
+                                        <div class="text-muted small">Название фильма</div>
+                                        <span class="text-muted small">1 день назад</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="playlist-cover" style="width: 60px; height: 60px; flex-shrink: 0;"></div>
+                                    <div class="ms-3 flex-grow-1">
+                                        <div class="fw-bold">Вы создали подборку</div>
+                                        <div class="text-muted small">Мои любимые фильмы</div>
+                                        <span class="text-muted small">3 дня назад</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

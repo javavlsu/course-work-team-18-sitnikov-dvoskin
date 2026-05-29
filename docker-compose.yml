@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cinema-postgres
+    environment:
+      POSTGRES_DB: cinemadb
+      POSTGRES_USER: cinema
+      POSTGRES_PASSWORD: cinema
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cinema -d cinemadb"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: ./cinema-service
+      dockerfile: Dockerfile
+      target: dev
+    container_name: cinema-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinemadb
+      SPRING_DATASOURCE_USERNAME: cinema
+      SPRING_DATASOURCE_PASSWORD: cinema
+      APP_JWT_SECRET: NJ5ia1W5D0V5ZSCMl/+oqJnh76a5xOOQhEJ0HWgyn9JNASrvAreuFNAh94xR2KEH
+    ports:
+      - "8080:8080"
+      - "35729:35729"
+    volumes:
+      - ./cinema-service/src:/app/src
+      - ./cinema-service/pom.xml:/app/pom.xml
+      - maven_cache:/root/.m2
+
+volumes:
+  postgres_data:
+  maven_cache:

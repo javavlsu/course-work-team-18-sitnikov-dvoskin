@@ -1,0 +1,113 @@
+<!--
+  Gladia-faithful nav v3:
+   - Brand: small accent sparkle ✦ + wordmark "MovieHub" в title-case
+   - Mega-menu dropdowns (multi-column, with section labels + descriptions)
+   - Right CTAs: ghost "Войти" + white pill "Регистрация"
+-->
+<nav class="g-nav" aria-label="Основная навигация">
+  <div class="g-nav-inner">
+    <a class="g-nav-brand" href="/" aria-label="MovieHub — главная">
+      <span class="g-brand-circle" aria-hidden="true">
+        <svg class="g-brand-mark" width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M12 1L13.8 9.2L22 11L13.8 12.8L12 21L10.2 12.8L2 11L10.2 9.2Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="g-brand-text">MovieHub</span>
+    </a>
+
+    <button class="g-nav-toggle" type="button" aria-label="Открыть меню" data-g-nav-toggle>
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="g-nav-menu" data-g-nav-menu>
+      <ul class="g-nav-list">
+        <li class="g-has-mega">
+          <a class="g-nav-link" href="/catalog">Каталог</a>
+          <div class="g-mega" role="menu" aria-label="Каталог">
+            <div class="g-mega-grid">
+              <div class="g-mega-col">
+                <span class="g-mega-label">По типу</span>
+                <a class="g-mega-item" href="/catalog?type=MOVIE">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h4M2 15h4M18 9h4M18 15h4M7 4v16M17 4v16"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">Все фильмы</div><div class="g-mega-item-desc">200+ полнометражных лент</div></div>
+                </a>
+                <a class="g-mega-item" href="/catalog?type=SERIES">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">Сериалы</div><div class="g-mega-item-desc">Минисериалы и многосезонники</div></div>
+                </a>
+              </div>
+              <div class="g-mega-col">
+                <span class="g-mega-label">По рейтингу</span>
+                <a class="g-mega-item" href="/catalog?sort=top">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">Топ всех времён</div><div class="g-mega-item-desc">9.0+ от сообщества</div></div>
+                </a>
+                <a class="g-mega-item" href="/catalog?sort=popular">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5C5 10 9 6 12 2c2 4 6 7 6 11a6 6 0 0 1-12 0c0-1 .3-2 .8-2.7"/><path d="M11 18a3 3 0 0 0 3-3c0-1.5-1-2.5-2-3.5"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">Популярное</div><div class="g-mega-item-desc">Хиты этого месяца</div></div>
+                </a>
+                <a class="g-mega-item" href="/catalog?sort=new">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">Новинки</div><div class="g-mega-item-desc">Свежие добавления каталога</div></div>
+                </a>
+              </div>
+              <div class="g-mega-col">
+                <span class="g-mega-label">Действие</span>
+                <a class="g-mega-item" href="/catalog?sort=alpha">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h16"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">По алфавиту</div><div class="g-mega-item-desc">А-Я весь каталог</div></div>
+                </a>
+                <a class="g-mega-item" href="/catalog">
+                  <span class="g-mega-item-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                  </span>
+                  <div><div class="g-mega-item-title">Поиск</div><div class="g-mega-item-desc">Название, жанр, год — внутри каталога</div></div>
+                </a>
+              </div>
+            </div>
+            <div class="g-mega-foot">
+              <span class="g-eyebrow">Подборка</span>
+              <a href="/catalog" class="g-mega-foot-link">Открыть полный каталог</a>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      <div class="g-nav-cta" data-auth-guest>
+        <a class="g-nav-link g-nav-link--cta" href="/login">Войти</a>
+        <a class="g-btn g-btn-primary g-btn-sm" href="/register">Регистрация</a>
+      </div>
+
+      <div class="g-nav-cta" data-auth-user hidden>
+        <div class="dropdown">
+          <a class="g-nav-user dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="user-avatar" data-user-avatar style="width:30px;height:30px;font-size:12px;">U</span>
+            <span data-user-username class="d-none d-lg-inline">user</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end g-nav-dropdown" aria-labelledby="userMenu">
+            <li><a class="dropdown-item" href="/profile">Мой профиль</a></li>
+            <li><a class="dropdown-item" href="/me/reviews">Мои рецензии</a></li>
+            <li><a class="dropdown-item" href="/me/playlists">Мои подборки</a></li>
+            <li data-auth-admin hidden><hr class="dropdown-divider"></li>
+            <li data-auth-admin hidden><a class="dropdown-item" href="/admin">Админ-панель</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" data-auth-logout>Выйти</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

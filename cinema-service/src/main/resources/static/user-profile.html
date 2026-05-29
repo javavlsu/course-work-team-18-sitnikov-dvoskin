@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Профиль пользователя · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!-- Pattern: Letterboxd public profile — большой avatar + handle + 4 stats + tab pills (no settings) -->
+  <main class="container my-4 my-lg-5">
+
+    <section class="profile-header" id="profile-header">
+      <div class="user-avatar user-avatar-lg" id="pub-avatar">?</div>
+      <div class="flex-grow-1">
+        <h1 class="profile-name" id="pub-name">Загрузка…</h1>
+        <p class="profile-handle" id="pub-handle">@…</p>
+        <p class="text-muted small mb-0" id="pub-meta"></p>
+        <div class="d-flex align-items-center flex-wrap gap-3 mt-2">
+          <span class="text-muted small">
+            <strong id="cnt-followers">0</strong> подписчиков ·
+            <strong id="cnt-following">0</strong> подписок
+          </span>
+          <button class="btn btn-sm btn-primary" id="follow-btn" hidden>Подписаться</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-stats-grid mb-5" id="pub-stats">
+      <div class="profile-stat-tile"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Рецензии</div></div>
+      <div class="profile-stat-tile"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Подборки</div></div>
+      <div class="profile-stat-tile"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Оценки</div></div>
+      <div class="profile-stat-tile"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Средняя</div></div>
+    </section>
+
+    <div class="tab-pills">
+      <button class="tab-pill is-active" data-tab="reviews">Рецензии <span class="tab-count" id="cnt-reviews">0</span></button>
+      <button class="tab-pill" data-tab="playlists">Подборки <span class="tab-count" id="cnt-playlists">0</span></button>
+    </div>
+
+    <section id="tab-reviews" class="tab-content">
+      <div id="reviews-mount"></div>
+    </section>
+
+    <section id="tab-playlists" class="tab-content" hidden>
+      <div class="row g-3" id="playlists-mount"></div>
+    </section>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-user-profile.js"></script>
+</body>
+</html>

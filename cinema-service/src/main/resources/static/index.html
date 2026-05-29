@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>MovieHub — каталог, рецензии и подборки кино</title>
+  <meta name="description" content="MovieHub — каталог фильмов и сериалов с рецензиями зрителей и тематическими подборками. Без рекламы и без платных тарифов.">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <main>
+
+    <!-- Hero — Gladia signature centered composition.
+         Square chip eyebrow, large solid-white H1, accent solid purple,
+         lead, two CTAs (white pill + ghost), three inline stats. -->
+    <section class="g-hero">
+      <div class="g-container">
+        <h1 class="g-hero-title g-reveal">
+          Найди кино, на которое<br>
+          <span class="g-accent">не жалко вечера.</span>
+        </h1>
+        <p class="g-hero-lead g-reveal">
+          200+ фильмов и сериалов в одном каталоге, рецензии живых людей и тематические подборки на любое настроение. Без рекламы и без платных тарифов.
+        </p>
+        <div class="g-cta-row g-reveal">
+          <a href="/catalog" class="g-btn g-btn-primary">Найти своё кино</a>
+        </div>
+
+        <!-- Inline stats — 3-up like Gladia "2B+ minutes / 300K+ devs / 99.95% uptime" -->
+        <ul class="g-stat-row g-reveal-group" id="stats-strip">
+          <li>
+            <span class="g-stat-num" id="stat-content">—</span>
+            <span class="g-stat-label">Фильмов и сериалов</span>
+          </li>
+          <li>
+            <span class="g-stat-num" id="stat-reviews">—</span>
+            <span class="g-stat-label">Опубликованных рецензий</span>
+          </li>
+          <li>
+            <span class="g-stat-num" id="stat-playlists">—</span>
+            <span class="g-stat-label">Открытых подборок</span>
+          </li>
+          <li>
+            <span class="g-stat-num" id="stat-users">—</span>
+            <span class="g-stat-label">Пользователей в сообществе</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Studios marquee — 3 ряда бесконечной ленты, локально захостенные SVG. -->
+    <section class="g-section g-logos g-reveal">
+      <div class="g-container">
+        <span class="g-logos-label">В каталоге &middot; от блокбастеров до фестивального арт-хауса</span>
+        <div class="g-logos-marquee" aria-label="Студии в каталоге">
+
+          <!-- Каждый трек: 5 брендов × 2 повтора (видимые) + дубль того же
+               (aria-hidden) для бесшовной петли. -50% анимации = ширина
+               одной копии → петля стыкуется идентично, snap'а нет. -->
+          <ul class="g-logos-row g-logos-row--1">
+            <li class="g-logos-track">
+              <img src="/img/studios/universal.svg" alt="Universal Pictures">
+              <img src="/img/studios/paramount.svg" alt="Paramount Pictures">
+              <img src="/img/studios/sony.svg" alt="Sony Pictures">
+              <img src="/img/studios/20th-century-fox.svg" alt="20th Century Fox">
+              <img src="/img/studios/focus.svg" alt="Focus Features">
+              <img src="/img/studios/universal.svg" alt="Universal Pictures">
+              <img src="/img/studios/paramount.svg" alt="Paramount Pictures">
+              <img src="/img/studios/sony.svg" alt="Sony Pictures">
+              <img src="/img/studios/20th-century-fox.svg" alt="20th Century Fox">
+              <img src="/img/studios/focus.svg" alt="Focus Features">
+              <img src="/img/studios/universal.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/paramount.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/sony.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/20th-century-fox.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/focus.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/universal.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/paramount.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/sony.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/20th-century-fox.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/focus.svg" alt="" aria-hidden="true">
+            </li>
+          </ul>
+
+          <ul class="g-logos-row g-logos-row--2">
+            <li class="g-logos-track">
+              <img src="/img/studios/disney.svg" alt="Walt Disney Pictures">
+              <img src="/img/studios/pixar.svg" alt="Pixar">
+              <img src="/img/studios/lucasfilm.svg" alt="Lucasfilm">
+              <img src="/img/studios/dreamworks.svg" alt="DreamWorks">
+              <img src="/img/studios/blumhouse.svg" alt="Blumhouse">
+              <img src="/img/studios/disney.svg" alt="Walt Disney Pictures">
+              <img src="/img/studios/pixar.svg" alt="Pixar">
+              <img src="/img/studios/lucasfilm.svg" alt="Lucasfilm">
+              <img src="/img/studios/dreamworks.svg" alt="DreamWorks">
+              <img src="/img/studios/blumhouse.svg" alt="Blumhouse">
+              <img src="/img/studios/disney.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/pixar.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/lucasfilm.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/dreamworks.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/blumhouse.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/disney.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/pixar.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/lucasfilm.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/dreamworks.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/blumhouse.svg" alt="" aria-hidden="true">
+            </li>
+          </ul>
+
+          <ul class="g-logos-row g-logos-row--3">
+            <li class="g-logos-track">
+              <img src="/img/studios/a24.svg" alt="A24">
+              <img src="/img/studios/neon.svg" alt="NEON">
+              <img src="/img/studios/searchlight.svg" alt="Searchlight Pictures">
+              <img src="/img/studios/miramax.svg" alt="Miramax">
+              <img src="/img/studios/legendary.svg" alt="Legendary">
+              <img src="/img/studios/a24.svg" alt="A24">
+              <img src="/img/studios/neon.svg" alt="NEON">
+              <img src="/img/studios/searchlight.svg" alt="Searchlight Pictures">
+              <img src="/img/studios/miramax.svg" alt="Miramax">
+              <img src="/img/studios/legendary.svg" alt="Legendary">
+              <img src="/img/studios/a24.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/neon.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/searchlight.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/miramax.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/legendary.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/a24.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/neon.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/searchlight.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/miramax.svg" alt="" aria-hidden="true">
+              <img src="/img/studios/legendary.svg" alt="" aria-hidden="true">
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Сейчас смотрят — clean uniform 2:3 poster grid (no bento). -->
+    <section class="g-section g-reveal">
+      <div class="g-container">
+        <header class="g-section-head">
+          <div>
+            <h2>Сейчас смотрят</h2>
+          </div>
+          <a href="/catalog" class="g-link">Открыть каталог</a>
+        </header>
+        <div class="row g-3 g-md-4 g-reveal-group" id="trending-grid"></div>
+      </div>
+    </section>
+
+    <!-- Section: Top rated — uniform 2:3 poster grid -->
+    <section class="g-section g-reveal">
+      <div class="g-container">
+        <header class="g-section-head">
+          <div>
+            <h2>Топ по оценкам зрителей</h2>
+          </div>
+          <a href="/catalog?sort=top" class="g-link">Весь рейтинг</a>
+        </header>
+        <div class="row g-3 g-md-4 g-reveal-group" id="top-rated-grid"></div>
+      </div>
+    </section>
+
+    <!-- For-you (auth-only): Recommended -->
+    <section class="g-section" id="for-you-section" hidden>
+      <div class="g-container">
+        <header class="g-section-head">
+          <div>
+            <h2>Может понравиться</h2>
+          </div>
+          <a href="/catalog?sort=top" class="g-link">Ещё фильмы</a>
+        </header>
+        <div class="row g-3 g-md-4 g-reveal-group" id="for-you-grid"></div>
+      </div>
+    </section>
+
+    <!-- Section: Curated playlists -->
+    <section class="g-section g-reveal">
+      <div class="g-container">
+        <header class="g-section-head">
+          <div>
+            <h2>Под любое настроение</h2>
+          </div>
+          <a href="/me/playlists" class="g-link">Все подборки</a>
+        </header>
+        <div class="row g-3 g-reveal-group" id="playlists-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-index.js"></script>
+</body>
+</html>

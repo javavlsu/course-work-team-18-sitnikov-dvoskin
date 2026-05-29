@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Мой профиль · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Pattern: Letterboxd profile (refero search "letterboxd profile stats"):
+    big circular avatar + display name + handle + 4-tile stats grid + tab navigation
+    (Films / Reviews / Lists). Recent items below tabs.
+  -->
+  <main class="container my-4 my-lg-5">
+
+    <section class="profile-header" id="profile-header">
+      <div class="user-avatar user-avatar-lg" data-user-avatar>?</div>
+      <div class="profile-identity">
+        <h1 class="profile-name" id="prof-name">Загрузка…</h1>
+        <p class="profile-handle" id="prof-handle">@…</p>
+        <div class="profile-meta-chips" id="prof-meta-chips"></div>
+      </div>
+      <a class="profile-header-action" href="/settings" aria-label="Настройки">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Настройки</span>
+      </a>
+    </section>
+
+    <section class="profile-stats-grid mb-5" id="prof-stats">
+      <button type="button" class="profile-stat-tile" data-jump="reviews"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Рецензии</div></button>
+      <button type="button" class="profile-stat-tile" data-jump="playlists"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Подборки</div></button>
+      <div class="profile-stat-tile"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Оценки</div></div>
+      <div class="profile-stat-tile"><div class="num skeleton" style="width:60px;height:28px"></div><div class="label">Средняя</div></div>
+    </section>
+
+    <div class="tab-pills">
+      <button class="tab-pill is-active" data-tab="reviews">Рецензии <span class="tab-count" id="cnt-reviews">0</span></button>
+      <button class="tab-pill" data-tab="playlists">Подборки <span class="tab-count" id="cnt-playlists">0</span></button>
+    </div>
+
+    <section id="tab-reviews" class="tab-content">
+      <div id="reviews-mount"></div>
+    </section>
+
+    <section id="tab-playlists" class="tab-content" hidden>
+      <div class="row g-3" id="playlists-mount"></div>
+    </section>
+
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-profile.js"></script>
+</body>
+</html>

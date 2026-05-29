@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+  <title>Регистрация · MovieHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header data-include="navbar"></header>
+
+  <!--
+    Pattern: Apple ID register (clean stacked form, helper text below each input).
+    Pattern: Letterboxd join page — minimalist with single CTA + login link below.
+  -->
+  <main class="auth-shell">
+    <section class="auth-card g-reveal" aria-labelledby="reg-title">
+      <h1 id="reg-title">Создать профиль</h1>
+      <p class="auth-sub">Присоединяйтесь к сообществу киноманов</p>
+
+      <div class="auth-alert" id="reg-error" hidden></div>
+
+      <form id="reg-form" class="g-reveal-group" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="reg-username">Имя пользователя</label>
+          <input class="form-control" type="text" id="reg-username" name="username"
+                 autocomplete="username" required minlength="3" maxlength="50" pattern="[A-Za-z0-9_]{3,50}">
+          <div class="form-help">Латиница, цифры или подчеркивание</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="reg-email">Электронная почта</label>
+          <input class="form-control" type="email" id="reg-email" name="email"
+                 autocomplete="email" required maxlength="100">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="reg-pw">Пароль</label>
+          <input class="form-control" type="password" id="reg-pw" name="password"
+                 autocomplete="new-password" required minlength="8">
+          <div class="form-help">Не менее 8 символов</div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="reg-submit">Зарегистрироваться</button>
+      </form>
+
+      <div class="auth-divider">уже есть аккаунт</div>
+
+      <div class="text-center">
+        <a class="btn btn-outline-light" href="/login">Войти в профиль</a>
+      </div>
+    </section>
+  </main>
+
+  <footer data-include="footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/partials.js"></script>
+  <script src="/js/page-register.js"></script>
+</body>
+</html>

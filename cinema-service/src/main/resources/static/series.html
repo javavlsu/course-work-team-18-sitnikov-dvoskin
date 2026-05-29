@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Каталог · MovieHub</title>
+  <link rel="canonical" href="/catalog?type=SERIES">
+  <script>
+    const p = new URLSearchParams(location.search);
+    p.set('type', 'SERIES');
+    location.replace('/catalog?' + p.toString());
+  </script>
+  <meta http-equiv="refresh" content="0;url=/catalog?type=SERIES">
+</head>
+<body></body>
+</html>
